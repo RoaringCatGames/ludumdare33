@@ -48,8 +48,21 @@ public class Assets {
 
         if(state == null){ state = ""; }
         switch(state){
-            case "PUNCHING":
+            case States.DEFAULT:
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FRONT);
+                break;
+            case States.PUNCH:
                 regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                break;
+            case States.KICK:
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                break;
+            case States.TAIL:
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                break;
+            case States.FIRE:
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                break;
             default:
                 regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FRONT);
                 break;

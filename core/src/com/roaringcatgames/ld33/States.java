@@ -6,4 +6,8 @@ package com.roaringcatgames.ld33;
 public class States {
 
     public static final String DEFAULT = "DEFAULT";
+    public static final String KICK = "KICK";
+    public static final String PUNCH = "PUNCH";
+    public static final String FIRE = "FIRE";
+    public static final String TAIL = "TAIL";
 }

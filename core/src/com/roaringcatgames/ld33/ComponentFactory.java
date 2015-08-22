@@ -76,4 +76,10 @@ public class ComponentFactory {
         bounds.bounds.set(x, y, width, height);
         return bounds;
     }
+
+    public PlayerComponent createPlayerComponent(String name) {
+        PlayerComponent player = engine.createComponent(PlayerComponent.class);
+        player.name = name;
+        return player;
+    }
 }

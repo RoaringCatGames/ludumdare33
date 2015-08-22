@@ -19,7 +19,6 @@ public class GameScreen extends ScreenAdapter {
 
     Entity player1;
     Entity player2;
-    float elapsedTime = 0f;
 
     public GameScreen(MonsterDancer game){
         super();
@@ -30,7 +29,7 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(new PulsingSystem());
         engine.addSystem(new AnimationSystem());
         engine.addSystem(new BoundsSystem());
-        //engine.addSystem(new MovementSystem());
+        engine.addSystem(new MovementSystem());
         engine.addSystem(new RenderingSystem(game.batch));
         engine.addSystem(new DebugRenderer(game.batch));
 
@@ -67,17 +66,15 @@ public class GameScreen extends ScreenAdapter {
         Entity e = engine.createEntity();
         TextureComponent textureComponent = componentFactory.createTextureComponent();
         TransformComponent transform = componentFactory.createTransformComponent(x, y, scaleX, scaleY, rotation);
-//                size * 0.5f, size * 0.5f);
 
         AnimationComponent aniComp = componentFactory.createAnimationComponent();
-        Animation ani = new Animation(frameTime, Assets.getPlayerFrames());
+        Animation ani = new Animation(frameTime, Assets.getPlayerFrames(States.DEFAULT));
         aniComp.animations.put(States.DEFAULT, ani);
         StateComponent p1State = componentFactory.createStateComponent(States.DEFAULT, true);
 
-        MovementComponent move = componentFactory.createMovementComponent(1f, 1f, 0.2f, 0.2f);
+        MovementComponent move = componentFactory.createMovementComponent(0f, 0f, 0f, 0f);
+        BoundsComponent bounds = componentFactory.createBoundsComponent(x, y, PlayerComponent.WIDTH_M, PlayerComponent.HEIGHT_M);
 
-        float size = RenderUtil.PixelsToMeters(PlayerComponent.WIDTH_P);
-        BoundsComponent bounds = componentFactory.createBoundsComponent(x, y, size, size);
         e.add(bounds);
         e.add(move);
         e.add(textureComponent);

@@ -27,12 +27,12 @@ public class ComponentFactory {
         return comp;
     }
 
-    public TransformComponent createTransformComponent(float x, float y, float scaleX, float scaleY, float rotation, float originX, float originY){
+    public TransformComponent createTransformComponent(float x, float y, float scaleX, float scaleY, float rotation){//, float originX, float originY){
         TransformComponent transform = engine.createComponent(TransformComponent.class);
         transform.position.set(x, y, 0f);
         transform.scale.set(scaleX, scaleY);
         transform.rotation = rotation;
-        transform.origin.set(originX, originY);
+        //transform.origin.set(originX, originY);
 
         return transform;
     }
@@ -58,5 +58,22 @@ public class ComponentFactory {
             state.isLooping = isLooping[0];
         }
         return state;
+    }
+
+    public MovementComponent createMovementComponent(){
+        return createMovementComponent(0f, 0f, 0f, 0f);
+    }
+
+    public MovementComponent createMovementComponent(float xVel, float yVel, float accelX, float accelY){
+        MovementComponent move = engine.createComponent(MovementComponent.class);
+        move.velocity.set(xVel, yVel);
+        move.accel.set(accelX, accelY);
+        return move;
+    }
+
+    public BoundsComponent createBoundsComponent(float x, float y, float width, float height){
+        BoundsComponent bounds = engine.createComponent(BoundsComponent.class);
+        bounds.bounds.set(x, y, width, height);
+        return bounds;
     }
 }

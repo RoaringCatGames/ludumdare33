@@ -3,7 +3,7 @@ apply plugin: "java"
 sourceCompatibility = 1.7
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-project.ext.mainClassName = "LudumDareTexturePacker";
+project.ext.mainClassName = "LD33TexturePacker";
 
 task run(dependsOn: classes, type: JavaExec){
     main = project.mainClassName

@@ -20,12 +20,12 @@ public class MonsterDancer extends Game {
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		if(!isLoaded && am.update()){
 			isLoaded = true;
-			setScreen(new MenuScreen(this));
+			setScreen(new GameScreen(this));
 		}
 
 		super.render();

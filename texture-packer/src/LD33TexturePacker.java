@@ -24,7 +24,7 @@ public class LD33TexturePacker {
         Settings settings = new Settings();
 
         // adjust the padding settings
-        settings.scale = FIFTY_PERCENT;
+        settings.scale = HUNDRED_PERCENT;//FIFTY_PERCENT;
         settings.paddingX = 2;
         settings.paddingY = 2;
         settings.edgePadding = false;

@@ -18,9 +18,15 @@ import java.util.Comparator;
  * Created by barry on 8/18/15 @ 8:27 PM.
  */
 public class RenderingSystem extends IteratingSystem {
+
     static final float FRUSTUM_WIDTH = 37.5f;
-    static final float FRUSTUM_HEIGHT = 25f;
-    static final float PIXELS_TO_METRES = 1.0f / 32.0f;
+    static final float FRUSTUM_HEIGHT = 25.0f;
+    static final float PPM = 32.0f;
+    public static final float PIXELS_TO_METRES = 1.0f / PPM;
+
+    public static float PixelsToMeters(float pixelValue){
+        return pixelValue * PIXELS_TO_METRES;
+    }
 
     private SpriteBatch batch;
     private Array<Entity> renderQueue;
@@ -49,7 +55,7 @@ public class RenderingSystem extends IteratingSystem {
         this.batch = batch;
 
         cam = new OrthographicCamera(FRUSTUM_WIDTH, FRUSTUM_HEIGHT);
-        cam.position.set(FRUSTUM_WIDTH / 2, FRUSTUM_HEIGHT / 2, 0);
+        cam.position.set(FRUSTUM_WIDTH / 2f, FRUSTUM_HEIGHT / 2f, 0);
     }
 
     @Override
@@ -74,14 +80,14 @@ public class RenderingSystem extends IteratingSystem {
             float width = tex.region.getRegionWidth();
             float height = tex.region.getRegionHeight();
 
-            float originX = t.origin.x;
-            float originY = t.origin.y;
+            float originX = width/2f;
+            float originY = height/2f;
 
             batch.draw(tex.region,
                     t.position.x - originX, t.position.y - originY,
                     originX, originY,
                     width, height,
-                    t.scale.x * PIXELS_TO_METRES, t.scale.y * PIXELS_TO_METRES,
+                    PixelsToMeters(t.scale.x), PixelsToMeters(t.scale.y),
                     MathUtils.radiansToDegrees * t.rotation);
         }
 

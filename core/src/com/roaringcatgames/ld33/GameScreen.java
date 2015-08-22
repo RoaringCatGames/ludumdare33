@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.roaringcatgames.ld33.components.*;
 import com.roaringcatgames.ld33.systems.*;
 
+import javax.xml.soap.Text;
+
 /**
  * Created by barry on 8/22/15 @ 12:36 AM.
  */
@@ -31,6 +33,7 @@ public class GameScreen extends ScreenAdapter {
 
     Entity player1;
     Entity player2;
+    int songIndex = 0;
     Music currentSong;
 
     private int state;
@@ -47,37 +50,35 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(new MovementSystem());
         engine.addSystem(new PlayerSystem());
         engine.addSystem(new RenderingSystem(game.batch));
-        engine.addSystem(new DebugRenderer(game.batch));
+        engine.addSystem(new DebugRenderer(game.batch, engine, engine.getSystem(RenderingSystem.class).getCamera()));
 
         componentFactory = new ComponentFactory(engine);
 
         createPlayers();
-        OrthographicCamera cam = engine.getSystem(RenderingSystem.class).getCamera();
-        Entity e = engine.createEntity();
-        float width = cam.viewportWidth;
-        float height = cam.viewportHeight;
-        TransformComponent tc = componentFactory.createTransformComponent(width/2f, height/2f, 1f, 1f, 0f);
-
-        BoundsComponent bc = componentFactory.createBoundsComponent(0f, 0f, cam.viewportWidth, cam.viewportHeight);
-        e.add(tc);
-        e.add(bc);
-        engine.addEntity(e);
 
         state = GAME_READY;
     }
 
     private void createPlayers() {
-        float p1x = PlayerComponent.WIDTH_M/2f, p1y = PlayerComponent.HEIGHT_M/2f, p1sx = 1f, p1sy = 1f, p1r = 0f, p1frameTime = 0.08f;
-        float p2x = p1x + (1.5f*PlayerComponent.WIDTH_M), p2y = PlayerComponent.HEIGHT_M/2f, p2sx = -1f, p2sy = 1f, p2r = 0f, p2frameTime = 0.16f;
+        float   p1x = PlayerComponent.WIDTH_M/2f,
+                p1y = PlayerComponent.HEIGHT_M/2f,
+                p1sx = 1f,
+                p1sy = 1f,
+                p1r = 0f,
+                p1frameTime = 0.08f;
 
         player1 = buildPlayerEntity("P1", p1x, p1y, p1sx, p1sy, p1r, p1frameTime);
         engine.addEntity(player1);
 
+        float   p2x = p1x + (1.5f*PlayerComponent.WIDTH_M),
+                p2y = PlayerComponent.HEIGHT_M/2f,
+                p2sx = -1f,
+                p2sy = 1f,
+                p2r = 0f,
+                p2frameTime = 0.16f;
+
         player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r, p2frameTime);
         engine.addEntity(player2);
-
-
-
     }
 
     private Entity buildPlayerEntity(String name, float x, float y, float scaleX, float scaleY, float rotation, float frameTime) {
@@ -142,6 +143,10 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateReady(float deltaTime) {
         if(Gdx.input.justTouched() && currentSong == null){
+
+            Song s = getSong(songIndex);
+            generateDanceMoves(s);
+
             currentSong = Assets.getSong1();
             currentSong.setLooping(false);
             currentSong.play();
@@ -185,6 +190,64 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateGameOver(float deltaTime){
 
+    }
+
+    private Song getSong(int songIndex){
+        DanceMoveType[] moves = new DanceMoveType[]{
+                DanceMoveType.KICK,
+                DanceMoveType.FIRE,
+                DanceMoveType.TAIL,
+                DanceMoveType.PUNCH
+        };
+        Song s = new Song("s1", 1000f, 68);
+        float targetMillis = 0f;
+        int index = 0;
+        for(int i = 0; i<68;i++){
+            targetMillis += 1000f;
+            DanceMoveType dmt = moves[index++%3];
+            s.addMove(targetMillis, dmt);
+        }
+
+        return s;
+    }
+
+    private void generateDanceMoves(Song song){
+
+        float distanceBetweenQuarter = 1f;
+        float initialY = 0f;
+
+        //How many meters per millisecond
+        float metersPerSecond = distanceBetweenQuarter / (song.getMillisPerBeat()/1000f);
+
+
+        for(DanceMove m:song.getMoves()){
+            Entity e = engine.createEntity();
+            //Add Texture for Move
+            TextureComponent txc = componentFactory.createTextureComponent();
+            e.add(txc);
+            float x = m.moveType == DanceMoveType.KICK ? 4f :
+                      m.moveType == DanceMoveType.FIRE ? 10f :
+                      m.moveType == DanceMoveType.TAIL ? 16f :
+                                                         22f; //PUNCH
+
+            float y = initialY - (metersPerSecond*(m.targetMillis/1000f));
+
+            //Add Transform for Move
+            TransformComponent tc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
+            e.add(tc);
+            //Add Bounds for Move
+            BoundsComponent bc = componentFactory.createBoundsComponent(tc.position.x, tc.position.y, 6f, 6f);
+            e.add(bc);
+            //Add Animations for Move
+            AnimationComponent ac = componentFactory.createAnimationComponent();
+            //ac.animations.put(States.DEFAULT, Assets.)
+
+            //Add Movement for Move
+            MovementComponent mc = componentFactory.createMovementComponent(0f, metersPerSecond, 0f, 0f);
+            e.add(mc);
+
+            engine.addEntity(e);
+        }
     }
 
     @Override

@@ -39,6 +39,9 @@ public class Assets {
     public static Music getIntroMusic(){
         return am.get(INTRO_MUSIC, MUSIC);
     }
+    public static Music getSong1(){
+        return am.get(SONG1_MUSIC);
+    }
 
     public static Array<TextureAtlas.AtlasRegion> getPlayerFrames(String state){
         Array<TextureAtlas.AtlasRegion> regions;
@@ -46,9 +49,9 @@ public class Assets {
         if(state == null){ state = ""; }
         switch(state){
             case "PUNCHING":
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions("Punch");
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
             default:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions("Front");
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FRONT);
                 break;
         }
 
@@ -61,6 +64,7 @@ public class Assets {
 
 
     private static String P1_FRONT = "Front";
+    private static String P1_PUNCH = "Punch";
     private static String INTRO_MUSIC = "music/intro.mp3";
     private static String SONG1_MUSIC = "music/hoverwhip.mp3";
     private static String SONG2_MUSIC = "music/clusterblock.mp3";

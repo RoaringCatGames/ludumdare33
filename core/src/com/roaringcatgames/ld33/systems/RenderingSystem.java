@@ -66,6 +66,7 @@ public class RenderingSystem extends IteratingSystem {
 
         cam.update();
         batch.setProjectionMatrix(cam.combined);
+        batch.enableBlending();
         batch.begin();
 
         for (Entity entity : renderQueue) {

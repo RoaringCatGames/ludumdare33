@@ -2,6 +2,7 @@ package com.roaringcatgames.ld33;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,10 +14,10 @@ import com.badlogic.gdx.utils.Array;
 public class Assets {
 
     private static Class<TextureAtlas> TEXTURE_ATLAS = TextureAtlas.class;
+    private static Class<Music> MUSIC = Music.class;
 
     private static final String ANI_ATLAS = "animations/animations.atlas";
-
-
+    private static final String SPRITE_ATLAS = "sprites/sprites.atlas";
 
     public static AssetManager am;
 
@@ -28,20 +29,40 @@ public class Assets {
         am = new AssetManager();
 
         am.load(ANI_ATLAS, TEXTURE_ATLAS);
-//        TEST_TR = new TextureRegion(loadTexture("badlogic.jpg"));
-//        TEST_ANI = new TextureRegion[]{
-//                new TextureRegion(loadTexture("badlogic.jpg")),
-//                new TextureRegion(loadTexture("badlogic2.jpg")),
-//                new TextureRegion(loadTexture("badlogic3.jpg")),
-//                new TextureRegion(loadTexture("badlogic4.jpg"))
-//        };
-
+        am.load(SPRITE_ATLAS, TEXTURE_ATLAS);
+        am.load(INTRO_MUSIC, MUSIC);
+        am.load(SONG1_MUSIC, MUSIC);
+        am.load(SONG2_MUSIC, MUSIC);
         return am;
     }
 
-    public static Array<TextureAtlas.AtlasRegion> getPlayerFrames(){
-        Array<TextureAtlas.AtlasRegion> regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions("test/badlogic");
-        Gdx.app.log("Assets", "Region Count: " + regions.size);
+    public static Music getIntroMusic(){
+        return am.get(INTRO_MUSIC, MUSIC);
+    }
+
+    public static Array<TextureAtlas.AtlasRegion> getPlayerFrames(String state){
+        Array<TextureAtlas.AtlasRegion> regions;
+
+        if(state == null){ state = ""; }
+        switch(state){
+            case "PUNCHING":
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions("Punch");
+            default:
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions("Front");
+                break;
+        }
+
         return regions;
     }
+
+    public static TextureRegion getTVFrame(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(TV_COVER);
+    }
+
+
+    private static String P1_FRONT = "Front";
+    private static String INTRO_MUSIC = "music/intro.mp3";
+    private static String SONG1_MUSIC = "music/hoverwhip.mp3";
+    private static String SONG2_MUSIC = "music/clusterblock.mp3";
+    private static String TV_COVER = "tv";
 }

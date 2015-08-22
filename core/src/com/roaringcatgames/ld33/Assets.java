@@ -55,13 +55,13 @@ public class Assets {
                 regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
                 break;
             case States.KICK:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_KICK);
                 break;
             case States.TAIL:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_TAIL);
                 break;
             case States.FIRE:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FIRE);
                 break;
             default:
                 regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FRONT);
@@ -76,8 +76,12 @@ public class Assets {
     }
 
 
-    private static String P1_FRONT = "Front";
-    private static String P1_PUNCH = "Punch";
+    private static String P1_FRONT = "Front/Front";
+    private static String P1_PUNCH = "Punch/Punch";
+    private static String P1_KICK = "Kick/Kick";
+    private static String P1_FIRE = "Fire/Fire";
+    private static String P1_TAIL = "Tail/Tail";
+
     private static String INTRO_MUSIC = "music/intro.mp3";
     private static String SONG1_MUSIC = "music/hoverwhip.mp3";
     private static String SONG2_MUSIC = "music/clusterblock.mp3";

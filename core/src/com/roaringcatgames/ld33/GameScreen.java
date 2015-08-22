@@ -1,18 +1,14 @@
 package com.roaringcatgames.ld33;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.roaringcatgames.ld33.components.*;
 import com.roaringcatgames.ld33.systems.*;
-
-import javax.xml.soap.Text;
 
 /**
  * Created by barry on 8/22/15 @ 12:36 AM.
@@ -25,7 +21,13 @@ public class GameScreen extends ScreenAdapter {
     static final int GAME_SONG_END = 3;
     static final int GAME_OVER = 4;
 
-
+    static final DanceMoveType[] moves = new DanceMoveType[]{
+            DanceMoveType.KICK,
+            DanceMoveType.FIRE,
+            DanceMoveType.TAIL,
+            DanceMoveType.PUNCH
+    };
+    static final float MOVE_SIZE = 3f;
 
     MonsterDancer game;
     PooledEngine engine;
@@ -144,6 +146,7 @@ public class GameScreen extends ScreenAdapter {
     private void updateReady(float deltaTime) {
         if(Gdx.input.justTouched() && currentSong == null){
 
+            generateMoveTargets();
             Song s = getSong(songIndex);
             generateDanceMoves(s);
 
@@ -192,19 +195,29 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
+    private void generateMoveTargets(){
+        for(DanceMoveType dmt:moves){
+            Entity e = engine.createEntity();
+            float x = getDanceMoveXPosition(dmt);
+            float y = World.HEIGHT_METERS - MOVE_SIZE/2f;
+            TransformComponent tfc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
+            e.add(tfc);
+            TextureComponent tc = componentFactory.createTextureComponent();
+            e.add(tc);
+            BoundsComponent bc = componentFactory.createBoundsComponent(x, y, MOVE_SIZE, MOVE_SIZE);
+            e.add(bc);
+            engine.addEntity(e);
+        }
+    }
+
     private Song getSong(int songIndex){
-        DanceMoveType[] moves = new DanceMoveType[]{
-                DanceMoveType.KICK,
-                DanceMoveType.FIRE,
-                DanceMoveType.TAIL,
-                DanceMoveType.PUNCH
-        };
+
         Song s = new Song("s1", 1000f, 68);
         float targetMillis = 0f;
         int index = 0;
         for(int i = 0; i<68;i++){
             targetMillis += 1000f;
-            DanceMoveType dmt = moves[index++%3];
+            DanceMoveType dmt = moves[index++%4];
             s.addMove(targetMillis, dmt);
         }
 
@@ -213,8 +226,10 @@ public class GameScreen extends ScreenAdapter {
 
     private void generateDanceMoves(Song song){
 
-        float distanceBetweenQuarter = 1f;
-        float initialY = 0f;
+
+
+        float distanceBetweenQuarter = 6f;
+        float initialY = World.HEIGHT_METERS - (MOVE_SIZE /2f) - distanceBetweenQuarter;
 
         //How many meters per millisecond
         float metersPerSecond = distanceBetweenQuarter / (song.getMillisPerBeat()/1000f);
@@ -225,10 +240,7 @@ public class GameScreen extends ScreenAdapter {
             //Add Texture for Move
             TextureComponent txc = componentFactory.createTextureComponent();
             e.add(txc);
-            float x = m.moveType == DanceMoveType.KICK ? 4f :
-                      m.moveType == DanceMoveType.FIRE ? 10f :
-                      m.moveType == DanceMoveType.TAIL ? 16f :
-                                                         22f; //PUNCH
+            float x = getDanceMoveXPosition(m.moveType);
 
             float y = initialY - (metersPerSecond*(m.targetMillis/1000f));
 
@@ -236,7 +248,7 @@ public class GameScreen extends ScreenAdapter {
             TransformComponent tc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
             e.add(tc);
             //Add Bounds for Move
-            BoundsComponent bc = componentFactory.createBoundsComponent(tc.position.x, tc.position.y, 6f, 6f);
+            BoundsComponent bc = componentFactory.createBoundsComponent(tc.position.x, tc.position.y, MOVE_SIZE, MOVE_SIZE);
             e.add(bc);
             //Add Animations for Move
             AnimationComponent ac = componentFactory.createAnimationComponent();
@@ -247,6 +259,20 @@ public class GameScreen extends ScreenAdapter {
             e.add(mc);
 
             engine.addEntity(e);
+        }
+    }
+
+    private float getDanceMoveXPosition(DanceMoveType moveType, boolean...isPlayer2) {
+        if(isPlayer2 != null && isPlayer2.length > 0 && isPlayer2[0]){
+            return moveType == DanceMoveType.KICK ? 21.5f :
+                   moveType == DanceMoveType.FIRE ? 18.5f :
+                   moveType == DanceMoveType.TAIL ? 15.5f :
+                                                    13.5f;
+        }else {
+            return moveType == DanceMoveType.KICK ? 2.5f :
+                   moveType == DanceMoveType.FIRE ? 5.5f :
+                   moveType == DanceMoveType.TAIL ? 8.5f :
+                                                    11.5f;
         }
     }
 

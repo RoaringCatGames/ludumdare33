@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -21,6 +22,7 @@ public class DebugRenderer extends IteratingSystem {
     private Array<Entity> processQueue;
     ComponentMapper<BoundsComponent> bm;
 
+    private boolean isDebugMode = false;
 
     public DebugRenderer(SpriteBatch batch){
         super(Family.all(BoundsComponent.class).get());
@@ -35,19 +37,25 @@ public class DebugRenderer extends IteratingSystem {
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-
-        Gdx.gl20.glLineWidth(1f);
-        shapeRenderer.setProjectionMatrix(this.getEngine().getSystem(RenderingSystem.class).getCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.YELLOW);
-        for(Entity e:processQueue) {
-            BoundsComponent bounds = bm.get(e);
-            shapeRenderer.rect(bounds.bounds.x, bounds.bounds.y, bounds.bounds.width, bounds.bounds.height);
-            shapeRenderer.circle(bounds.bounds.x + (bounds.bounds.width/2f)-0.2f,
-                                 bounds.bounds.y + (bounds.bounds.height/2f)-0.2f,
-                                 0.1f);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)){
+            isDebugMode = !isDebugMode;
         }
-        shapeRenderer.end();
+
+        if(isDebugMode) {
+            Gdx.gl20.glLineWidth(1f);
+            shapeRenderer.setProjectionMatrix(this.getEngine().getSystem(RenderingSystem.class).getCamera().combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.YELLOW);
+            for (Entity e : processQueue) {
+                BoundsComponent bounds = bm.get(e);
+                shapeRenderer.rect(bounds.bounds.x, bounds.bounds.y, bounds.bounds.width, bounds.bounds.height);
+                shapeRenderer.circle(bounds.bounds.x + (bounds.bounds.width / 2f) - 0.2f,
+                        bounds.bounds.y + (bounds.bounds.height / 2f) - 0.2f,
+                        0.1f);
+            }
+            shapeRenderer.end();
+        }
+
         processQueue.clear();
     }
 

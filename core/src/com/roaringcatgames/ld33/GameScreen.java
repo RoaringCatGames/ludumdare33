@@ -2,7 +2,9 @@ package com.roaringcatgames.ld33;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.roaringcatgames.ld33.components.*;
@@ -13,12 +15,23 @@ import com.roaringcatgames.ld33.systems.*;
  */
 public class GameScreen extends ScreenAdapter {
 
+    static final int GAME_READY = 0;
+    static final int GAME_RUNNING = 1;
+    static final int GAME_PAUSED = 2;
+    static final int GAME_SONG_END = 3;
+    static final int GAME_OVER = 4;
+
+
+
     MonsterDancer game;
     PooledEngine engine;
     ComponentFactory componentFactory;
 
     Entity player1;
     Entity player2;
+    Music currentSong;
+
+    private int state;
 
     public GameScreen(MonsterDancer game){
         super();
@@ -46,6 +59,8 @@ public class GameScreen extends ScreenAdapter {
         e.add(tc);
         e.add(bc);
         engine.addEntity(e);
+
+        state = GAME_READY;
     }
 
     private void createPlayers() {
@@ -89,6 +104,50 @@ public class GameScreen extends ScreenAdapter {
         if (deltaTime > 0.1f) deltaTime = 0.1f;
 
         engine.update(deltaTime);
+
+        switch(state){
+            case GAME_READY:
+                updateReady(deltaTime);
+                break;
+            case GAME_RUNNING:
+                updateRunning(deltaTime);
+                break;
+            case GAME_PAUSED:
+                updatePaused(deltaTime);
+                break;
+            case GAME_SONG_END:
+                updateSongOver(deltaTime);
+                break;
+            case GAME_OVER:
+                updateGameOver(deltaTime);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateReady(float deltaTime) {
+        if(Gdx.input.justTouched() && currentSong == null){
+            currentSong = Assets.getSong1();
+            currentSong.setLooping(false);
+            currentSong.play();
+            state = GAME_RUNNING;
+        }
+    }
+
+    private void updateRunning(float deltaTime){
+
+    }
+
+    private void updatePaused(float deltaTime){
+
+    }
+
+    private void updateSongOver(float deltaTime){
+
+    }
+
+    private void updateGameOver(float deltaTime){
 
     }
 

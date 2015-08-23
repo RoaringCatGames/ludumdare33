@@ -51,6 +51,10 @@ public class DanceSystem extends IteratingSystem {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+
+        World.TOP_P1_MOVE = null;
+        World.TOP_P2_MOVE = null;
+
         if(p1MovesQueue.size > 0) {
             p1MovesQueue.sort(comparator);
             Entity e = p1MovesQueue.get(0);

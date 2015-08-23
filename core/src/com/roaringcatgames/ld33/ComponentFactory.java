@@ -111,10 +111,14 @@ public class ComponentFactory {
         return keypress;
     }
 
-    public TextComponent createTextComponent(BitmapFont font){
+    public TextComponent createTextComponent(BitmapFont font, String inText){
         TextComponent text = engine.createComponent(TextComponent.class);
         text.font = font;
+        text.text = inText;
         return text;
+    }
+    public TextComponent createTextComponent(BitmapFont font){
+        return createTextComponent(font, null);
     }
 
     public ToggleComponent createToggleComponent() {

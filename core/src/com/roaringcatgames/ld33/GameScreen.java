@@ -8,10 +8,12 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.roaringcatgames.ld33.components.*;
 import com.roaringcatgames.ld33.systems.*;
+
+import java.util.Random;
 
 /**
  * Created by barry on 8/22/15 @ 12:36 AM.
@@ -35,6 +37,7 @@ public class GameScreen extends ScreenAdapter {
     PooledEngine engine;
     ComponentFactory componentFactory;
 
+    Entity timer;
     Entity player1;
     Entity player2;
     int songIndex = 0;
@@ -95,6 +98,11 @@ public class GameScreen extends ScreenAdapter {
         x = World.SCREEN.width + World.SCREEN.x - 2f;
         p2Score.add(componentFactory.createTransformComponent(x, y, 1f, 1f, 0f));
         engine.addEntity(p2Score);
+
+        timer = engine.createEntity();
+        timer.add(componentFactory.createTextComponent(Assets.getFont()));
+        timer.add(componentFactory.createTransformComponent(World.getScreenCenter(), World.SCREEN.y + World.SCREEN.height/2f, 1f, 1f, 0f));
+        engine.addEntity(timer);
 
         state = GAME_READY;
     }
@@ -195,6 +203,7 @@ public class GameScreen extends ScreenAdapter {
 
         float bounceTime = 0.12f;
         float frameTime = 0.08f;
+        float winFrameTime = 0.16f;
         Entity e = engine.createEntity();
         TextureComponent textureComponent = componentFactory.createTextureComponent();
         TransformComponent transform = componentFactory.createTransformComponent(x, y, scaleX, scaleY, rotation);
@@ -207,7 +216,7 @@ public class GameScreen extends ScreenAdapter {
         Animation aniPunch = new Animation(frameTime, Assets.getPlayerFrames(States.PUNCH, isP2), Animation.PlayMode.NORMAL);
         Animation aniTail = new Animation(frameTime, Assets.getPlayerFrames(States.TAIL, isP2), Animation.PlayMode.NORMAL);
         Animation aniFire = new Animation(frameTime, Assets.getPlayerFrames(States.FIRE, isP2), Animation.PlayMode.NORMAL);
-        Animation aniWin = new Animation(frameTime, Assets.getPlayerFrames(States.WIN, isP2), Animation.PlayMode.LOOP);
+        Animation aniWin = new Animation(winFrameTime, Assets.getPlayerFrames(States.WIN, isP2), Animation.PlayMode.LOOP);
         aniComp.animations.put(States.DEFAULT, ani);
         aniComp.animations.put(States.KICK, aniKick);
         aniComp.animations.put(States.PUNCH, aniPunch);
@@ -268,54 +277,31 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
+    private float countDown = 3f;
     private void updateReady(float deltaTime) {
-        if(Gdx.input.justTouched() && currentSong == null){
 
+        playerOneScore = 0;
+        playerTwoScore = 0;
+        timer.getComponent(TextComponent.class).text = Integer.toString((int)Math.ceil(countDown));
+        countDown -= deltaTime;
+
+        if(countDown <= 0f){
+            countDown = 3f;
+            timer.getComponent(TransformComponent.class).isHidden = true;
             generateMoveTargets();
             currentSongData = getSong(songIndex);
             generateDanceMoves(currentSongData);
 
-            currentSong = Assets.getSong1();
+            currentSong = songIndex == 0 ? Assets.getSong1() : Assets.getSong2();
             currentSong.setLooping(false);
             currentSong.play();
             state = GAME_RUNNING;
         }
     }
 
-    private String getActionStateFromKey(int key){
-        return key == Input.Keys.A || key == Input.Keys.LEFT ?  States.KICK :
-               key == Input.Keys.W || key == Input.Keys.UP ?    States.FIRE :
-               key == Input.Keys.S || key == Input.Keys.DOWN ?  States.TAIL :
-                                                                States.PUNCH;
-    }
-    private int checkPlayerKey(int key, Entity topMove, Entity player){
-        int pointsScored = 0;
-        if(Gdx.input.isKeyJustPressed(key)){
-            if(topMove != null){
-                DanceMoveComponent dmc = topMove.getComponent(DanceMoveComponent.class);
-                BoundsComponent bc = topMove.getComponent(BoundsComponent.class);
-                if(dmc != null && bc != null) {
-                    if (dmc.key == key) {
-                        if (World.isInPerfectRange(bc.bounds)) {
-                            player.getComponent(StateComponent.class).set(getActionStateFromKey(key));
-                            pointsScored = 2;
-                        } else if (World.isInOkRange(bc.bounds)) {
-                            pointsScored = 1;
-                        }
-                    }
-                }
 
-                if(pointsScored > 0){
-                    StateComponent sc = topMove.getComponent(StateComponent.class);
-                    sc.set(States.PRESSED);
-                }
-            }
-        }
-        return pointsScored;
-    }
 
     private void updateRunning(float deltaTime){
-
 
         int scored = checkPlayerKey(Input.Keys.A, World.TOP_P1_MOVE, player1);
         scored += checkPlayerKey(Input.Keys.W, World.TOP_P1_MOVE, player1);
@@ -351,20 +337,99 @@ public class GameScreen extends ScreenAdapter {
         }else if(highestScore >= destructionIncrement){//1
             fgCity.getComponent(StateComponent.class).set(States.DEST1);
             bgCity.getComponent(StateComponent.class).set(States.DEST1);
+        }else{
+            fgCity.getComponent(StateComponent.class).set(States.DEFAULT);
+            bgCity.getComponent(StateComponent.class).set(States.DEFAULT);
         }
 
         p1Score.getComponent(TextComponent.class).text = "" + playerOneScore;
         p2Score.getComponent(TextComponent.class).text = "" + playerTwoScore;
 
-        //Gdx.app.log("GAME", "Scores P1: " + playerOneScore + " P2: " + playerTwoScore);
+
+
+        if(World.TOP_P1_MOVE == null && World.TOP_P2_MOVE == null && !currentSong.isPlaying()){
+            state = GAME_SONG_END;
+        }
     }
 
     private void updatePaused(float deltaTime){
 
     }
 
-    private void updateSongOver(float deltaTime){
+    boolean hasProcessedSongOver = false;
+    Entity backBtn;
+    Entity nextSongBtn;
+    Vector3 touchPoint = new Vector3();
+    private void updateSongOver(float deltaTime) {
 
+        if (!hasProcessedSongOver) {
+            StateComponent p1s = player1.getComponent(StateComponent.class);
+
+            if(game.is2Player) {
+
+                StateComponent p2s = player2.getComponent(StateComponent.class);
+
+                if (playerOneScore > playerTwoScore) {
+                    p1s.set(States.WIN);
+                    p1s.isLooping = true;
+                } else if (playerTwoScore > playerOneScore) {
+                    p2s.set(States.WIN);
+                    p2s.isLooping = true;
+                } else {
+                    p1s.set(States.WIN);
+                    p1s.isLooping = true;
+                    p2s.set(States.WIN);
+                    p2s.isLooping = true;
+                }
+            }else{
+                p1s.set(States.WIN);
+                p1s.isLooping = true;
+            }
+            hasProcessedSongOver = true;
+
+            ///SHow Menu Options.
+            if(songIndex < 1) {
+                float nextX = World.SCREEN.x + (World.SCREEN.width / 4f);
+                float nextY = World.SCREEN.y + ((World.SCREEN.height / 3f) * 2f);
+                float nextW = World.SCREEN.width / 2f;
+                nextSongBtn = engine.createEntity();
+                nextSongBtn.add(componentFactory.createBoundsComponent(nextX, nextY, nextW, 3f));
+                nextSongBtn.add(componentFactory.createTransformComponent(nextX, nextY, 1f, 1f, 0f));
+                nextSongBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Next Song"));
+                engine.addEntity(nextSongBtn);
+            }
+
+            float backX = World.SCREEN.x + ((World.SCREEN.width / 4f) * 3f);
+            float backY = World.SCREEN.y + ((World.SCREEN.height / 3f) * 2f);
+            float backW = World.SCREEN.width / 2f;
+            backBtn = engine.createEntity();
+            backBtn.add(componentFactory.createBoundsComponent(backX, backY, backW, 3f));
+            backBtn.add(componentFactory.createTransformComponent(backX, backY, 1f, 1f, 0f));
+            backBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Menu"));
+            engine.addEntity(backBtn);
+
+        }
+
+        if (Gdx.input.justTouched()) {
+            engine.getSystem(RenderingSystem.class).getCamera().unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+            BoundsComponent backBnds = backBtn.getComponent(BoundsComponent.class);
+            if (backBnds.bounds.contains(touchPoint.x, touchPoint.y)) {
+                currentSong.stop();
+                game.setScreen(new FullMenuScreen(game));
+            }
+
+            if(songIndex < 1 && nextSongBtn != null) {
+                BoundsComponent nextBnds = nextSongBtn.getComponent(BoundsComponent.class);
+                if (nextBnds.bounds.contains(touchPoint.x, touchPoint.y)) {
+                    if(nextSongBtn != null)
+                        engine.removeEntity(nextSongBtn);
+                    if(backBtn != null)
+                        engine.removeEntity(backBtn);
+                    songIndex++;
+                    state = GAME_READY;
+                }
+            }
+        }
     }
 
     private void updateGameOver(float deltaTime){
@@ -433,14 +498,28 @@ public class GameScreen extends ScreenAdapter {
 
     private Song getSong(int songIndex){
 
-        Song s = new Song("s1", 900f, 68);
-        float targetMillis = 0f;
-        int index = 0;
-        float beatsInSong = s.getLengthInSeconds()*1000f/s.getMillisPerBeat();
-        for(int i = 0; i<beatsInSong;i++){
-            targetMillis += s.getMillisPerBeat();
-            DanceMoveType dmt = moves[index++%4];
-            s.addMove(targetMillis, dmt);
+        Random r = new Random(System.currentTimeMillis());
+        Song s;
+        if(songIndex == 0) {
+            s = new Song("s1", 900f, 68);
+            float targetMillis = 0f;
+            int index = 0;
+            float beatsInSong = s.getLengthInSeconds() * 1000f / s.getMillisPerBeat();
+            for (int i = 0; i < beatsInSong; i++) {
+                targetMillis += s.getMillisPerBeat();
+                DanceMoveType dmt = moves[r.nextInt(4)];//index++ % 4];
+                s.addMove(targetMillis, dmt);
+            }
+        }else{
+            s = new Song("s2", 700f, 195);
+            float targetMillis = 0f;
+            int index = 0;
+            float beatsInSong = s.getLengthInSeconds() * 1000f / s.getMillisPerBeat();
+            for (int i = 0; i < beatsInSong; i++) {
+                targetMillis += s.getMillisPerBeat();
+                DanceMoveType dmt = moves[r.nextInt(4)];//index++ % 4];
+                s.addMove(targetMillis, dmt);
+            }
         }
 
         return s;
@@ -522,6 +601,38 @@ public class GameScreen extends ScreenAdapter {
                moveType == DanceMoveType.FIRE ? midX-(World.MOVE_SIZE/2f) :
                moveType == DanceMoveType.TAIL ? midX+(World.MOVE_SIZE/2f) :
                                                 midX+(World.MOVE_SIZE*1.5f);
+    }
+
+    private String getActionStateFromKey(int key){
+        return key == Input.Keys.A || key == Input.Keys.LEFT ?  States.KICK :
+                key == Input.Keys.W || key == Input.Keys.UP ?    States.FIRE :
+                        key == Input.Keys.S || key == Input.Keys.DOWN ?  States.TAIL :
+                                States.PUNCH;
+    }
+    private int checkPlayerKey(int key, Entity topMove, Entity player){
+        int pointsScored = 0;
+        if(Gdx.input.isKeyJustPressed(key)){
+            if(topMove != null){
+                DanceMoveComponent dmc = topMove.getComponent(DanceMoveComponent.class);
+                BoundsComponent bc = topMove.getComponent(BoundsComponent.class);
+                if(dmc != null && bc != null) {
+                    if (dmc.key == key) {
+                        if (World.isInPerfectRange(bc.bounds)) {
+                            player.getComponent(StateComponent.class).set(getActionStateFromKey(key));
+                            pointsScored = 2;
+                        } else if (World.isInOkRange(bc.bounds)) {
+                            pointsScored = 1;
+                        }
+                    }
+                }
+
+                if(pointsScored > 0){
+                    StateComponent sc = topMove.getComponent(StateComponent.class);
+                    sc.set(States.PRESSED);
+                }
+            }
+        }
+        return pointsScored;
     }
 
     @Override

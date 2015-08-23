@@ -45,9 +45,8 @@ public class TextRendererSystem extends IteratingSystem {
             TextComponent text = tm.get(entity);
             TransformComponent transform = tfm.get(entity);
 
-            if (text.text != null) {
+            if (text.text != null && !transform.isHidden) {
 
-                Gdx.app.log("TextRenderer", "Rendering Text:" + text.text);
                 text.font.draw(batch, text.text, (transform.position.x)*32f, transform.position.y*32f);
             }
         }
@@ -59,8 +58,6 @@ public class TextRendererSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-
-        Gdx.app.log("TextRenderer", "Queuing Entity");
         renderQueue.add(entity);
 
     }

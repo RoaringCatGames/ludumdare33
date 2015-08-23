@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.roaringcatgames.ld33.States;
 import com.roaringcatgames.ld33.components.AnimationComponent;
 import com.roaringcatgames.ld33.components.PlayerComponent;
@@ -34,7 +35,10 @@ public class PlayerSystem extends IteratingSystem {
         StateComponent sc = sm.get(entity);
 
 
-        if(ac.animations.get(sc.get()).isAnimationFinished(sc.time)){
+        Animation ani = ac.animations.get(sc.get());
+        if (ani.getPlayMode() != Animation.PlayMode.LOOP &&
+                ani.isAnimationFinished(sc.time)){
+        //if(ac.animations.get(sc.get()).isAnimationFinished(sc.time)){
             sc.set(States.DEFAULT);
         }
     }

@@ -41,6 +41,9 @@ public class Assets {
     public static Music getSong1(){
         return am.get(SONG1_MUSIC);
     }
+    public static Music getSong2(){
+        return am.get(SONG2_MUSIC);
+    }
 
     public static BitmapFont getFont(){
         return am.get(FONT, BITMAP_FONT);

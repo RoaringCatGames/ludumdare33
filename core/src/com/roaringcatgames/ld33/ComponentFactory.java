@@ -88,4 +88,11 @@ public class ComponentFactory {
         move.moveType = moveType;
         return move;
     }
+
+    public RotateToComponent createRotateToComponent(float targetRotation, float rotationSpeed) {
+        RotateToComponent rotateTo = engine.createComponent(RotateToComponent.class);
+        rotateTo.targetRotation = targetRotation;
+        rotateTo.rotationSpeed = rotationSpeed;
+        return rotateTo;
+    }
 }

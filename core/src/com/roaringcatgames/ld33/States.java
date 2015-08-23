@@ -13,4 +13,6 @@ public class States {
     public static final String WIN = "WIN";
 
     public static final String ON = "ON";
+    public static final String ONE_PLAYER = "ONE_PLAYER";
+    public static final String TWO_PLAYER = "TWO_PLAYER";
 }

@@ -26,7 +26,7 @@ public class MonsterDancer extends Game {
 
 		if(!isLoaded && am.update()){
 			isLoaded = true;
-			setScreen(new MenuScreen(this));
+			setScreen(new FullMenuScreen(this));
 		}
 
 		super.render();

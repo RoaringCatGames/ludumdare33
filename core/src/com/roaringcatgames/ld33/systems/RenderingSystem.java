@@ -89,7 +89,7 @@ public class RenderingSystem extends IteratingSystem {
                     originX, originY,
                     width, height,
                     PixelsToMeters(t.scale.x), PixelsToMeters(t.scale.y),
-                    MathUtils.radiansToDegrees * t.rotation);
+                    t.rotation);
         }
 
         batch.end();

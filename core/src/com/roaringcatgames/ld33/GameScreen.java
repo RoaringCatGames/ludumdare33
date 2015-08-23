@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.roaringcatgames.ld33.components.*;
 import com.roaringcatgames.ld33.systems.*;
 
-import javax.swing.plaf.nimbus.State;
-
 /**
  * Created by barry on 8/22/15 @ 12:36 AM.
  */
@@ -77,15 +75,17 @@ public class GameScreen extends ScreenAdapter {
         player1 = buildPlayerEntity("P1", p1x, p1y, p1sx, p1sy, p1r, p1frameTime);
         engine.addEntity(player1);
 
-        float   p2x = ((World.SCREEN.width/4f)*3f) + World.SCREEN.x,
-                p2y = World.SCREEN.y + (PlayerComponent.HEIGHT_M/2f),
-                p2sx = -1f,
-                p2sy = 1f,
-                p2r = 0f,
-                p2frameTime = 0.16f;
+        if(game.is2Player) {
+            float p2x = ((World.SCREEN.width / 4f) * 3f) + World.SCREEN.x,
+                    p2y = World.SCREEN.y + (PlayerComponent.HEIGHT_M / 2f),
+                    p2sx = -1f,
+                    p2sy = 1f,
+                    p2r = 0f,
+                    p2frameTime = 0.16f;
 
-        player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r, p2frameTime);
-        engine.addEntity(player2);
+            player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r, p2frameTime);
+            engine.addEntity(player2);
+        }
 
         //MAYBE???
         Entity sweat = engine.createEntity();
@@ -200,14 +200,16 @@ public class GameScreen extends ScreenAdapter {
             player1.getComponent(StateComponent.class).set(States.PUNCH);
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
-            player2.getComponent(StateComponent.class).set(States.KICK);
-        }else if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
-            player2.getComponent(StateComponent.class).set(States.FIRE);
-        }else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
-            player2.getComponent(StateComponent.class).set(States.TAIL);
-        }else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
-            player2.getComponent(StateComponent.class).set(States.PUNCH);
+        if(game.is2Player) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+                player2.getComponent(StateComponent.class).set(States.KICK);
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                player2.getComponent(StateComponent.class).set(States.FIRE);
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+                player2.getComponent(StateComponent.class).set(States.TAIL);
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+                player2.getComponent(StateComponent.class).set(States.PUNCH);
+            }
         }
     }
 
@@ -242,17 +244,19 @@ public class GameScreen extends ScreenAdapter {
             e.add(bc);
             engine.addEntity(e);
 
-            //P2
-            Entity e2 = engine.createEntity();
-            float x2 = getDanceMoveXPosition(dmt, true);
+            if(game.is2Player) {
+                //P2
+                Entity e2 = engine.createEntity();
+                float x2 = getDanceMoveXPosition(dmt, true);
 
-            TransformComponent tfc2 = componentFactory.createTransformComponent(x2, y, 1f, 1f, 0f);
-            e2.add(tfc2);
-            TextureComponent tc2 = componentFactory.createTextureComponent();
-            e2.add(tc2);
-            BoundsComponent bc2 = componentFactory.createBoundsComponent(x2, y, MOVE_SIZE, MOVE_SIZE);
-            e2.add(bc2);
-            engine.addEntity(e2);
+                TransformComponent tfc2 = componentFactory.createTransformComponent(x2, y, 1f, 1f, 0f);
+                e2.add(tfc2);
+                TextureComponent tc2 = componentFactory.createTextureComponent();
+                e2.add(tc2);
+                BoundsComponent bc2 = componentFactory.createBoundsComponent(x2, y, MOVE_SIZE, MOVE_SIZE);
+                e2.add(bc2);
+                engine.addEntity(e2);
+            }
         }
     }
 

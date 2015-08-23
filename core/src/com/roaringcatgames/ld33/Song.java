@@ -32,4 +32,8 @@ public class Song {
     public Array<DanceMove> getMoves(){
         return moves;
     }
+
+    public int getMaxScore(){
+        return moves.size * 2;
+    }
 }

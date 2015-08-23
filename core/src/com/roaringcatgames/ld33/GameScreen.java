@@ -8,6 +8,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.roaringcatgames.ld33.components.*;
 import com.roaringcatgames.ld33.systems.*;
@@ -38,11 +39,16 @@ public class GameScreen extends ScreenAdapter {
     Entity player2;
     int songIndex = 0;
     Music currentSong;
+    Song currentSongData;
+
     Array<Entity> p1Targets;
     Array<Entity> p2Targets;
 
     Entity bgCity;
     Entity fgCity;
+
+    int playerOneScore = 0;
+    int playerTwoScore = 0;
 
     private int state;
 
@@ -90,7 +96,7 @@ public class GameScreen extends ScreenAdapter {
         engine.addEntity(w2);
 
 
-        Entity fgCity = engine.createEntity();
+        fgCity = engine.createEntity();
         fgCity.add(componentFactory.createStateComponent(States.DEFAULT));
         fgCity.add(componentFactory.createTextureComponent());
         StateTextureComponent fgCityStates = componentFactory.createStateTextureComponent();
@@ -108,7 +114,7 @@ public class GameScreen extends ScreenAdapter {
         fgCity.add(fgcityTransform);
         engine.addEntity(fgCity);
 
-        Entity bgCity = engine.createEntity();
+        bgCity = engine.createEntity();
         bgCity.add(componentFactory.createStateComponent(States.DEFAULT));
         bgCity.add(componentFactory.createTextureComponent());
         StateTextureComponent bgCityStates = componentFactory.createStateTextureComponent();
@@ -245,8 +251,8 @@ public class GameScreen extends ScreenAdapter {
         if(Gdx.input.justTouched() && currentSong == null){
 
             generateMoveTargets();
-            Song s = getSong(songIndex);
-            generateDanceMoves(s);
+            currentSongData = getSong(songIndex);
+            generateDanceMoves(currentSongData);
 
             currentSong = Assets.getSong1();
             currentSong.setLooping(false);
@@ -261,61 +267,72 @@ public class GameScreen extends ScreenAdapter {
                key == Input.Keys.S || key == Input.Keys.DOWN ?  States.TAIL :
                                                                 States.PUNCH;
     }
-    private void checkPlayerKey(int key, Entity topMove, Entity player){
+    private int checkPlayerKey(int key, Entity topMove, Entity player){
+        int pointsScored = 0;
         if(Gdx.input.isKeyJustPressed(key)){
             if(topMove != null){
                 DanceMoveComponent dmc = topMove.getComponent(DanceMoveComponent.class);
                 BoundsComponent bc = topMove.getComponent(BoundsComponent.class);
                 if(dmc != null && bc != null) {
-                    if (dmc.key == key && World.isInPerfectRange(bc.bounds)) {
-                        player.getComponent(StateComponent.class).set(getActionStateFromKey(key));
+                    if (dmc.key == key) {
+                        if (World.isInPerfectRange(bc.bounds)) {
+                            player.getComponent(StateComponent.class).set(getActionStateFromKey(key));
+                            pointsScored = 2;
+                        } else if (World.isInOkRange(bc.bounds)) {
+                            pointsScored = 1;
+                        }
                     }
+                }
+
+                if(pointsScored > 0){
+                    StateComponent sc = topMove.getComponent(StateComponent.class);
+                    sc.set(States.PRESSED);
                 }
             }
         }
+        return pointsScored;
     }
+
     private void updateRunning(float deltaTime){
 
 
-        checkPlayerKey(Input.Keys.A, World.TOP_P1_MOVE, player1);
-        checkPlayerKey(Input.Keys.W, World.TOP_P1_MOVE, player1);
-        checkPlayerKey(Input.Keys.S, World.TOP_P1_MOVE, player1);
-        checkPlayerKey(Input.Keys.D, World.TOP_P1_MOVE, player1);
+        int scored = checkPlayerKey(Input.Keys.A, World.TOP_P1_MOVE, player1);
+        scored += checkPlayerKey(Input.Keys.W, World.TOP_P1_MOVE, player1);
+        scored += checkPlayerKey(Input.Keys.S, World.TOP_P1_MOVE, player1);
+        scored += checkPlayerKey(Input.Keys.D, World.TOP_P1_MOVE, player1);
+        playerOneScore += scored;
+
         if(game.is2Player) {
-            checkPlayerKey(Input.Keys.LEFT, World.TOP_P2_MOVE, player2);
-            checkPlayerKey(Input.Keys.UP, World.TOP_P2_MOVE, player2);
-            checkPlayerKey(Input.Keys.DOWN, World.TOP_P2_MOVE, player2);
-            checkPlayerKey(Input.Keys.RIGHT, World.TOP_P2_MOVE, player2);
+            scored = 0;
+            scored += checkPlayerKey(Input.Keys.LEFT, World.TOP_P2_MOVE, player2);
+            scored += checkPlayerKey(Input.Keys.UP, World.TOP_P2_MOVE, player2);
+            scored += checkPlayerKey(Input.Keys.DOWN, World.TOP_P2_MOVE, player2);
+            scored += checkPlayerKey(Input.Keys.RIGHT, World.TOP_P2_MOVE, player2);
+            playerTwoScore += scored;
         }
 
 
-//        if(Gdx.input.isKeyJustPressed(Input.Keys.A)){
-//            if(World.TOP_P1_MOVE != null){
-//                DanceMoveComponent dmc = World.TOP_P1_MOVE.getComponent(DanceMoveComponent.class);
-//                BoundsComponent bc = World.TOP_P1_MOVE.getComponent(BoundsComponent.class);
-//                if(dmc.key == Input.Keys.A && World.isInPerfectRange(bc.bounds)){
-//                    player1.getComponent(StateComponent.class).set(States.KICK);
-//                }
-//            }
-//        }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
-//            player1.getComponent(StateComponent.class).set(States.FIRE);
-//        }else if(Gdx.input.isKeyJustPressed(Input.Keys.S)){
-//            player1.getComponent(StateComponent.class).set(States.TAIL);
-//        }else if(Gdx.input.isKeyJustPressed(Input.Keys.D)){
-//            player1.getComponent(StateComponent.class).set(States.PUNCH);
-//        }
-//
-//        if(game.is2Player) {
-//            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-//                player2.getComponent(StateComponent.class).set(States.KICK);
-//            } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-//                player2.getComponent(StateComponent.class).set(States.FIRE);
-//            } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-//                player2.getComponent(StateComponent.class).set(States.TAIL);
-//            } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-//                player2.getComponent(StateComponent.class).set(States.PUNCH);
-//            }
-//        }
+        int highestScore = Math.max(playerOneScore, playerTwoScore);
+        int segments = 6;
+        int destructionIncrement = currentSongData.getMaxScore()/segments;
+        if(highestScore >= destructionIncrement*(--segments)){ //5
+            fgCity.getComponent(StateComponent.class).set(States.DEST5);
+            bgCity.getComponent(StateComponent.class).set(States.DEST5);
+        }else if(highestScore >= destructionIncrement*(--segments)){//4
+            fgCity.getComponent(StateComponent.class).set(States.DEST4);
+            bgCity.getComponent(StateComponent.class).set(States.DEST4);
+        }else if(highestScore >= destructionIncrement*(--segments)){//3
+            fgCity.getComponent(StateComponent.class).set(States.DEST3);
+            bgCity.getComponent(StateComponent.class).set(States.DEST3);
+        }else if(highestScore >= destructionIncrement*(--segments)){//2
+            fgCity.getComponent(StateComponent.class).set(States.DEST2);
+            bgCity.getComponent(StateComponent.class).set(States.DEST2);
+        }else if(highestScore >= destructionIncrement){//1
+            fgCity.getComponent(StateComponent.class).set(States.DEST1);
+            bgCity.getComponent(StateComponent.class).set(States.DEST1);
+        }
+
+        Gdx.app.log("GAME", "Scores P1: " + playerOneScore + " P2: " + playerTwoScore);
     }
 
     private void updatePaused(float deltaTime){

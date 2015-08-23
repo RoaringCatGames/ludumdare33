@@ -94,7 +94,7 @@ public class DanceSystem extends IteratingSystem {
         DanceMoveComponent dmc = dmm.get(entity);
 
         BoundsComponent bc = bm.get(entity);
-        if(bc.bounds.x > _maxPerfectY){
+        if(bc.bounds.y > _maxPerfectY){
             this.getEngine().removeEntity(entity);
         }else if(dmc.isPlayer1){
             p1MovesQueue.add(entity);

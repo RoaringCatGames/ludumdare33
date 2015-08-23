@@ -140,6 +140,38 @@ public class Assets {
     private static String DOWN = "Keys/Down";
     private static String RIGHT = "Keys/Right";
 
+    public static TextureAtlas.AtlasRegion getTargetKeyFrame(int key){
+        TextureAtlas atlas = am.get(SPRITE_ATLAS, TEXTURE_ATLAS);
+        String regionKey = "TargetKeys/";
+        TextureAtlas.AtlasRegion region = null;
+        switch(key){
+            case Input.Keys.A:
+                region = atlas.findRegion(regionKey + "targetA");
+                break;
+            case Input.Keys.W:
+                region = atlas.findRegion(regionKey + "targetW");
+                break;
+            case Input.Keys.S:
+                region = atlas.findRegion(regionKey + "targetS");
+                break;
+            case Input.Keys.D:
+                region = atlas.findRegion(regionKey + "targetD");
+                break;
+            case Input.Keys.LEFT:
+                region = atlas.findRegion(regionKey + "targetLeft");
+                break;
+            case Input.Keys.UP:
+                region = atlas.findRegion(regionKey + "targetUp");
+                break;
+            case Input.Keys.DOWN:
+                region = atlas.findRegion(regionKey + "targetDown");
+                break;
+            case Input.Keys.RIGHT:
+                region = atlas.findRegion(regionKey + "targetRight");
+                break;
+        }
+        return region;
+    }
 
     public static TextureAtlas.AtlasRegion getDefaultKeyFrame(int key, boolean isP1){
         return getKeyCodeFrame(key, isP1, 0);

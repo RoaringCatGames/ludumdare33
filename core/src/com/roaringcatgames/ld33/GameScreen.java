@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.roaringcatgames.ld33.components.*;
 import com.roaringcatgames.ld33.systems.*;
@@ -241,10 +242,12 @@ public class GameScreen extends ScreenAdapter {
             //P1
             Entity e = engine.createEntity();
             float x = getDanceMoveXPosition(dmt, false);
-
-            TransformComponent tfc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
+            int key = getKeyFromMoveType(dmt, true);
+            TransformComponent tfc = componentFactory.createTransformComponent(x, y, 0.5f, 0.5f, 0f);
             e.add(tfc);
-            TextureComponent tc = componentFactory.createTextureComponent();
+            TextureAtlas.AtlasRegion region = Assets.getTargetKeyFrame(key);
+            Gdx.app.log("GAME", "Target Region:" + region.name);
+            TextureComponent tc = componentFactory.createTextureComponent(Assets.getTargetKeyFrame(key));
             e.add(tc);
             BoundsComponent bc = componentFactory.createBoundsComponent(x, y, World.MOVE_SIZE, World.MOVE_SIZE);
             e.add(bc);
@@ -256,10 +259,12 @@ public class GameScreen extends ScreenAdapter {
                 //P2
                 Entity e2 = engine.createEntity();
                 float x2 = getDanceMoveXPosition(dmt, true);
-
-                TransformComponent tfc2 = componentFactory.createTransformComponent(x2, y, 1f, 1f, 0f);
+                int key2 = getKeyFromMoveType(dmt, false);
+                TransformComponent tfc2 = componentFactory.createTransformComponent(x2, y, 0.5f, 0.5f, 0f);
                 e2.add(tfc2);
-                TextureComponent tc2 = componentFactory.createTextureComponent();
+                region = Assets.getTargetKeyFrame(key2);
+                Gdx.app.log("GAME", "Target Region:" + region.name);
+                TextureComponent tc2 = componentFactory.createTextureComponent(region);
                 e2.add(tc2);
                 BoundsComponent bc2 = componentFactory.createBoundsComponent(x2, y, World.MOVE_SIZE, World.MOVE_SIZE);
                 e2.add(bc2);
@@ -307,17 +312,7 @@ public class GameScreen extends ScreenAdapter {
         Entity e = engine.createEntity();
 
         int key;
-        if(isPlayer1) {
-            key = m.moveType == DanceMoveType.KICK ? Input.Keys.A :
-                    m.moveType == DanceMoveType.FIRE ? Input.Keys.W :
-                            m.moveType == DanceMoveType.TAIL ? Input.Keys.S :
-                                    Input.Keys.D;
-        }else{
-            key = m.moveType == DanceMoveType.KICK ? Input.Keys.LEFT :
-                    m.moveType == DanceMoveType.FIRE ? Input.Keys.UP :
-                            m.moveType == DanceMoveType.TAIL ? Input.Keys.DOWN :
-                                    Input.Keys.RIGHT;
-        }
+        key = getKeyFromMoveType(m.moveType, isPlayer1);
         float x = getDanceMoveXPosition(m.moveType, !isPlayer1);
         float y = initialY - (metersPerSecond*(m.targetMillis/1000f));
         float scale = 0.5f; //button images are off scale-wise
@@ -340,6 +335,22 @@ public class GameScreen extends ScreenAdapter {
         e.add(txc);
         e.add(sc);
         engine.addEntity(e);
+    }
+
+    private int getKeyFromMoveType(DanceMoveType m, boolean isPlayer1) {
+        int key;
+        if(isPlayer1) {
+            key = m == DanceMoveType.KICK ? Input.Keys.A :
+                  m == DanceMoveType.FIRE ? Input.Keys.W :
+                  m == DanceMoveType.TAIL ? Input.Keys.S :
+                                            Input.Keys.D;
+        }else{
+            key = m == DanceMoveType.KICK ? Input.Keys.LEFT :
+                  m == DanceMoveType.FIRE ? Input.Keys.UP :
+                  m == DanceMoveType.TAIL ? Input.Keys.DOWN :
+                                            Input.Keys.RIGHT;
+        }
+        return key;
     }
 
     private float getDanceMoveXPosition(DanceMoveType moveType, boolean...isPlayer2) {

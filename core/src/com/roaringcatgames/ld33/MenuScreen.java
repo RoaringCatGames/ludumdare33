@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -14,6 +15,9 @@ public class MenuScreen extends ScreenAdapter{
 
     OrthographicCamera guiCam;
     Vector3 touchPoint = new Vector3();
+
+    Rectangle playerSelectArea = new Rectangle(1060f, 90f, 106f, 107f);
+    Rectangle playButtonArea = new Rectangle(400f, 90f, 400f, 200f);
 
     public MenuScreen(MonsterDancer game){
         this.game = game;
@@ -26,10 +30,16 @@ public class MenuScreen extends ScreenAdapter{
         if (Gdx.input.justTouched()) {
             guiCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 
-            if(Assets.getIntroMusic().isPlaying()){
-                Assets.getIntroMusic().stop();
+            if(playerSelectArea.contains(touchPoint.x, touchPoint.y)){
+                game.is2Player = !game.is2Player;
             }
-            game.setScreen(new GameScreen(game));
+
+            if(playButtonArea.contains(touchPoint.x, touchPoint.y)) {
+                if (Assets.getIntroMusic().isPlaying()) {
+                    Assets.getIntroMusic().stop();
+                }
+                game.setScreen(new GameScreen(game));
+            }
         }
     }
 
@@ -40,11 +50,11 @@ public class MenuScreen extends ScreenAdapter{
         guiCam.update();
         game.batch.setProjectionMatrix(guiCam.combined);
 
-        game.batch.disableBlending();
+        game.batch.enableBlending();
         game.batch.begin();
         game.batch.draw(Assets.getTVFrame(), 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//        float scaleY = game.is2Player ? -1f : 1f;
-//        game.batch.draw(Assets.getSelectKnob(), 0, 0, 64f, 64f, 128f, 128f, 1f, scaleY, 0f);
+        float scaleY = game.is2Player ? -1f : 1f;
+        game.batch.draw(Assets.getSelectKnob(), 1060f, 90f, 53f, 53f, 106f, 107f, 1f, scaleY, 0f);
         game.batch.end();
 
 //        game.batch.enableBlending();

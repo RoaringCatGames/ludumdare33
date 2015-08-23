@@ -120,5 +120,5 @@ public class Assets {
     private static String SONG1_MUSIC = "music/hoverwhip.mp3";
     private static String SONG2_MUSIC = "music/clusterblock.mp3";
     private static String TV_COVER = "tv";
-    private static String KNOB = "??";
+    private static String KNOB = "Knob";
 }

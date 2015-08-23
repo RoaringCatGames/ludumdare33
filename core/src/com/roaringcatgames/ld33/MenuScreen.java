@@ -43,6 +43,8 @@ public class MenuScreen extends ScreenAdapter{
         game.batch.disableBlending();
         game.batch.begin();
         game.batch.draw(Assets.getTVFrame(), 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        float scaleY = game.is2Player ? -1f : 1f;
+//        game.batch.draw(Assets.getSelectKnob(), 0, 0, 64f, 64f, 128f, 128f, 1f, scaleY, 0f);
         game.batch.end();
 
 //        game.batch.enableBlending();

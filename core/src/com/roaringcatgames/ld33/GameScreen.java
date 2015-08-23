@@ -29,7 +29,7 @@ public class GameScreen extends ScreenAdapter {
             DanceMoveType.TAIL,
             DanceMoveType.PUNCH
     };
-    static final float MOVE_SIZE = 3f;
+    static final float MOVE_SIZE = 2f;
 
     MonsterDancer game;
     PooledEngine engine;
@@ -60,12 +60,15 @@ public class GameScreen extends ScreenAdapter {
 
         createPlayers();
 
+        createTVFrame();
+
         state = GAME_READY;
     }
 
     private void createPlayers() {
-        float   p1x = World.WIDTH_METERS/4f, //PlayerComponent.WIDTH_M/2f,
-                p1y = PlayerComponent.HEIGHT_M/2f,
+
+        float   p1x = (World.SCREEN.width/4f) + World.SCREEN.x,
+                p1y = World.SCREEN.y + (PlayerComponent.HEIGHT_M/2f),
                 p1sx = 1f,
                 p1sy = 1f,
                 p1r = 0f,
@@ -74,8 +77,8 @@ public class GameScreen extends ScreenAdapter {
         player1 = buildPlayerEntity("P1", p1x, p1y, p1sx, p1sy, p1r, p1frameTime);
         engine.addEntity(player1);
 
-        float   p2x = ((World.WIDTH_METERS/4f)*3f),
-                p2y = PlayerComponent.HEIGHT_M/2f,
+        float   p2x = ((World.SCREEN.width/4f)*3f) + World.SCREEN.x,
+                p2y = World.SCREEN.y + (PlayerComponent.HEIGHT_M/2f),
                 p2sx = -1f,
                 p2sy = 1f,
                 p2r = 0f,
@@ -84,6 +87,7 @@ public class GameScreen extends ScreenAdapter {
         player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r, p2frameTime);
         engine.addEntity(player2);
 
+        //MAYBE???
         Entity sweat = engine.createEntity();
         TextureComponent tc = componentFactory.createTextureComponent();
         sweat.add(tc);
@@ -102,13 +106,14 @@ public class GameScreen extends ScreenAdapter {
         TextureComponent textureComponent = componentFactory.createTextureComponent();
         TransformComponent transform = componentFactory.createTransformComponent(x, y, scaleX, scaleY, rotation);
 
+        boolean isP2 = name == "P2";
         AnimationComponent aniComp = componentFactory.createAnimationComponent();
-        Animation ani = new Animation(frameTime, Assets.getPlayerFrames(States.DEFAULT));
-        Animation aniKick = new Animation(frameTime, Assets.getPlayerFrames(States.KICK), Animation.PlayMode.NORMAL);
-        Animation aniPunch = new Animation(frameTime, Assets.getPlayerFrames(States.PUNCH), Animation.PlayMode.NORMAL);
-        Animation aniTail = new Animation(frameTime, Assets.getPlayerFrames(States.TAIL), Animation.PlayMode.NORMAL);
-        Animation aniFire = new Animation(frameTime, Assets.getPlayerFrames(States.FIRE), Animation.PlayMode.NORMAL);
-        Animation aniWin = new Animation(frameTime, Assets.getPlayerFrames(States.WIN), Animation.PlayMode.LOOP);
+        Animation ani = new Animation(frameTime, Assets.getPlayerFrames(States.DEFAULT, isP2));
+        Animation aniKick = new Animation(frameTime, Assets.getPlayerFrames(States.KICK, isP2), Animation.PlayMode.NORMAL);
+        Animation aniPunch = new Animation(frameTime, Assets.getPlayerFrames(States.PUNCH, isP2), Animation.PlayMode.NORMAL);
+        Animation aniTail = new Animation(frameTime, Assets.getPlayerFrames(States.TAIL, isP2), Animation.PlayMode.NORMAL);
+        Animation aniFire = new Animation(frameTime, Assets.getPlayerFrames(States.FIRE, isP2), Animation.PlayMode.NORMAL);
+        Animation aniWin = new Animation(frameTime, Assets.getPlayerFrames(States.WIN, isP2), Animation.PlayMode.LOOP);
         aniComp.animations.put(States.DEFAULT, ani);
         aniComp.animations.put(States.KICK, aniKick);
         aniComp.animations.put(States.PUNCH, aniPunch);
@@ -131,6 +136,16 @@ public class GameScreen extends ScreenAdapter {
         e.add(p1State);
 
         return e;
+    }
+
+    public void createTVFrame(){
+        Entity e = engine.createEntity();
+        TextureComponent tc = componentFactory.createTextureComponent(Assets.getTVFrame());
+        e.add(tc);
+        TransformComponent tfc = componentFactory.createTransformComponent(World.CENTERX_M, World.CENTERY_M, 1f, 1f, 0f);
+        tfc.position.set(tfc.position.x, tfc.position.y, -1f);
+        e.add(tfc);
+        engine.addEntity(e);
     }
 
     public void update(float deltaTime){
@@ -194,9 +209,6 @@ public class GameScreen extends ScreenAdapter {
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
             player2.getComponent(StateComponent.class).set(States.PUNCH);
         }
-
-
-
     }
 
     private void updatePaused(float deltaTime){
@@ -213,12 +225,14 @@ public class GameScreen extends ScreenAdapter {
 
     private void generateMoveTargets(){
 
-        float y = World.HEIGHT_METERS - MOVE_SIZE/2f;
+        float y = (World.SCREEN.height + World.SCREEN.y) - (MOVE_SIZE*0.75f);
 
-        //P1
+
         for(DanceMoveType dmt:moves){
+
+            //P1
             Entity e = engine.createEntity();
-            float x = getDanceMoveXPosition(dmt);
+            float x = getDanceMoveXPosition(dmt, false);
 
             TransformComponent tfc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
             e.add(tfc);
@@ -228,15 +242,16 @@ public class GameScreen extends ScreenAdapter {
             e.add(bc);
             engine.addEntity(e);
 
+            //P2
             Entity e2 = engine.createEntity();
             float x2 = getDanceMoveXPosition(dmt, true);
 
             TransformComponent tfc2 = componentFactory.createTransformComponent(x2, y, 1f, 1f, 0f);
-            e.add(tfc2);
+            e2.add(tfc2);
             TextureComponent tc2 = componentFactory.createTextureComponent();
-            e.add(tc2);
+            e2.add(tc2);
             BoundsComponent bc2 = componentFactory.createBoundsComponent(x2, y, MOVE_SIZE, MOVE_SIZE);
-            e.add(bc2);
+            e2.add(bc2);
             engine.addEntity(e2);
         }
     }
@@ -300,20 +315,14 @@ public class GameScreen extends ScreenAdapter {
 
         boolean isP2 = (isPlayer2 != null && isPlayer2.length > 0 && isPlayer2[0]);
 
-        float midX = World.WIDTH_METERS/4f;
+        float midX = World.SCREEN.width/4f;
         if(isP2) { midX *= 3f; }
+        midX += World.SCREEN.x;
 
-        return moveType == DanceMoveType.KICK ? midX-(MOVE_SIZE) :
+        return moveType == DanceMoveType.KICK ? midX-(MOVE_SIZE*1.5f) :
                moveType == DanceMoveType.FIRE ? midX-(MOVE_SIZE/2f) :
                moveType == DanceMoveType.TAIL ? midX+(MOVE_SIZE/2f) :
-                                                midX+(MOVE_SIZE);
-//        }else {
-//            float p1MidX = World.WIDTH_METERS/4f; 
-//            return moveType == DanceMoveType.KICK ? 2.5f :
-//                   moveType == DanceMoveType.FIRE ? 5.5f :
-//                   moveType == DanceMoveType.TAIL ? 8.5f :
-//                                                    11.5f;
-//        }
+                                                midX+(MOVE_SIZE*1.5f);
     }
 
     @Override

@@ -1,9 +1,7 @@
 package com.roaringcatgames.ld33;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
@@ -20,10 +18,6 @@ public class Assets {
     private static final String SPRITE_ATLAS = "sprites/sprites.atlas";
 
     public static AssetManager am;
-
-    private static Texture loadTexture(String fileName){
-        return new Texture(Gdx.files.internal(fileName));
-    }
 
     public static AssetManager load(){
         am = new AssetManager();
@@ -43,31 +37,53 @@ public class Assets {
         return am.get(SONG1_MUSIC);
     }
 
-    public static Array<TextureAtlas.AtlasRegion> getPlayerFrames(String state){
+    public static Array<TextureAtlas.AtlasRegion> getPlayerFrames(String state, boolean...isPlayer2){
+        boolean isP2 = isPlayer2 != null && isPlayer2.length > 0 && isPlayer2[0];
         Array<TextureAtlas.AtlasRegion> regions;
 
         if(state == null){ state = ""; }
         switch(state){
             case States.DEFAULT:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FRONT);
+                if(!isP2)
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FRONT);
+                else
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P2_FRONT);
                 break;
             case States.PUNCH:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                if(!isP2)
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_PUNCH);
+                else
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P2_PUNCH);
                 break;
             case States.KICK:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_KICK);
+                if(!isP2)
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_KICK);
+                else
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P2_KICK);
                 break;
             case States.TAIL:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_TAIL);
+                if(!isP2)
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_TAIL);
+                else
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P2_TAIL);
                 break;
             case States.FIRE:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FIRE);
+                if(!isP2)
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FIRE);
+                else
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P2_FIRE);
                 break;
             case States.WIN:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_WIN);
+                if(!isP2)
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_WIN);
+                else
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P2_WIN);
                 break;
             default:
-                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FRONT);
+                if(!isP2)
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_WIN);
+                else
+                    regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P2_WIN);
                 break;
         }
 
@@ -81,7 +97,9 @@ public class Assets {
     public static TextureRegion getTVFrame(){
         return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(TV_COVER);
     }
-
+    public static TextureRegion getSelectKnob(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(KNOB);
+    }
 
     private static String P1_FRONT = "Player1/Front/Front";
     private static String P1_PUNCH = "Player1/Punch/Punch";
@@ -89,10 +107,18 @@ public class Assets {
     private static String P1_FIRE = "Player1/Fire/Fire";
     private static String P1_TAIL = "Player1/Tail/Tail";
     private static String P1_WIN = "Player1/Win/Win";
+
+    private static String P2_FRONT = "Player2/Front/Front";
+    private static String P2_PUNCH = "Player2/Punch/Punch";
+    private static String P2_KICK = "Player2/Kick/Kick";
+    private static String P2_FIRE = "Player2/Fire/Fire";
+    private static String P2_TAIL = "Player2/Tail/Tail";
+    private static String P2_WIN = "Player2/Win/Win";
     private static String SWEAT = "Sweat";
 
     private static String INTRO_MUSIC = "music/intro.mp3";
     private static String SONG1_MUSIC = "music/hoverwhip.mp3";
     private static String SONG2_MUSIC = "music/clusterblock.mp3";
     private static String TV_COVER = "tv";
+    private static String KNOB = "??";
 }

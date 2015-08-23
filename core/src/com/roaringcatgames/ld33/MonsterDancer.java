@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MonsterDancer extends Game {
 	public SpriteBatch batch;
+	public boolean is2Player = false;
 
 	boolean isLoaded = false;
 	AssetManager am;

@@ -95,4 +95,8 @@ public class ComponentFactory {
         rotateTo.rotationSpeed = rotationSpeed;
         return rotateTo;
     }
+
+    public StateTextureComponent createStateTextureComponent() {
+        return engine.createComponent(StateTextureComponent.class);
+    }
 }

@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector3;
 import com.roaringcatgames.ld33.components.*;
@@ -16,7 +15,6 @@ import com.roaringcatgames.ld33.systems.*;
  */
 public class FullMenuScreen extends ScreenAdapter {
 
-    OrthographicCamera guiCam;
     Vector3 touchPoint = new Vector3();
 
     MonsterDancer game;
@@ -26,6 +24,9 @@ public class FullMenuScreen extends ScreenAdapter {
     Entity player1;
     Entity player2;
     Entity knob;
+    Entity spacebar;
+    boolean goTime = false;
+    float timeTillGo = 1f;
 
     public FullMenuScreen(MonsterDancer game){
         super();
@@ -33,6 +34,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
         engine = new PooledEngine();
 
+        engine.addSystem(new StateTextureSystem());
         engine.addSystem(new RotateToSystem());
         engine.addSystem(new PulsingSystem());
         engine.addSystem(new AnimationSystem());
@@ -54,7 +56,6 @@ public class FullMenuScreen extends ScreenAdapter {
         knob = engine.createEntity();
         TextureComponent tc = componentFactory.createTextureComponent(Assets.getSelectKnob());
         knob.add(tc);
-        //1060f, 90f, 106f, 107f
         TransformComponent tfc = componentFactory.createTransformComponent(34.8f, 4.8f, 1f, 1f, 0f);
         tfc.position.set(tfc.position.x, tfc.position.y, -1.1f);
         knob.add(tfc);
@@ -67,6 +68,24 @@ public class FullMenuScreen extends ScreenAdapter {
         engine.addEntity(knob);
 
         //SpaceBar
+        spacebar = engine.createEntity();
+        TextureComponent txc = componentFactory.createTextureComponent();
+        spacebar.add(txc);
+        StateComponent ssc = componentFactory.createStateComponent(States.DEFAULT);
+        spacebar.add(ssc);
+        StateTextureComponent stc = componentFactory.createStateTextureComponent();
+        stc.regions.put(States.DEFAULT, Assets.getSpacebarFrame(States.DEFAULT));
+        stc.regions.put(States.PRESSED, Assets.getSpacebarFrame(States.PRESSED));
+        spacebar.add(stc);
+        float x = World.SCREEN.x + (World.SCREEN.width/2f);
+        float y = World.SCREEN.y + 2f;
+        TransformComponent stfc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
+        stfc.position.z = -1f;
+        spacebar.add(stfc);
+
+        BoundsComponent sbc = componentFactory.createBoundsComponent(x, y, World.SCREEN.width/2f, 2f);
+        spacebar.add(sbc);
+        engine.addEntity(spacebar);
     }
 
     private void createPlayers() {
@@ -170,13 +189,25 @@ public class FullMenuScreen extends ScreenAdapter {
                 rc.targetRotation = game.is2Player ? -180f : 0f;
                 rc.rotationSpeed = game.is2Player ? -360f : 360f;
             }
-//
-//            if(playButtonArea.contains(touchPoint.x, touchPoint.y)) {
-//                if (Assets.getIntroMusic().isPlaying()) {
-//                    Assets.getIntroMusic().stop();
-//                }
-//                game.setScreen(new GameScreen(game));
-//            }
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            StateComponent sc = spacebar.getComponent(StateComponent.class);
+            if(sc.get() == States.DEFAULT) {
+                spacebar.getComponent(StateComponent.class).set(States.PRESSED);
+                goTime = true;
+            }
+        }
+
+        if(goTime){
+            if(timeTillGo <= 0f) {
+                if (Assets.getIntroMusic().isPlaying()) {
+                    Assets.getIntroMusic().stop();
+                }
+                game.setScreen(new GameScreen(game));
+            }else{
+                timeTillGo -= deltaTime;
+            }
         }
 
         updateRunning(deltaTime);

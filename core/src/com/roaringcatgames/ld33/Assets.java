@@ -100,6 +100,13 @@ public class Assets {
     public static TextureRegion getSelectKnob(){
         return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(KNOB);
     }
+    public static TextureRegion getSpacebarFrame(String state){
+        if(state == States.DEFAULT){
+            return am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(SPACEBAR).get(0);
+        }else{
+            return am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(SPACEBAR).get(1);
+        }
+    }
 
     private static String P1_FRONT = "Player1/Front/Front";
     private static String P1_PUNCH = "Player1/Punch/Punch";
@@ -121,4 +128,5 @@ public class Assets {
     private static String SONG2_MUSIC = "music/clusterblock.mp3";
     private static String TV_COVER = "tv";
     private static String KNOB = "Knob";
+    private static String SPACEBAR = "SPACE";
 }

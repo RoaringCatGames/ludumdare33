@@ -1,5 +1,6 @@
 package com.roaringcatgames.ld33;
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.roaringcatgames.ld33.components.*;
@@ -105,5 +106,10 @@ public class ComponentFactory {
         keypress.actionKey = key;
         keypress.targetState = state;
         return keypress;
+    }
+
+
+    public ToggleComponent createToggleComponent() {
+        return engine.createComponent(ToggleComponent.class);
     }
 }

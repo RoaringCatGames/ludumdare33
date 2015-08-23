@@ -17,7 +17,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
     Vector3 touchPoint = new Vector3();
 
-    MonsterDancer game;
+    private final MonsterDancer game;
     PooledEngine engine;
     ComponentFactory componentFactory;
 
@@ -28,12 +28,17 @@ public class FullMenuScreen extends ScreenAdapter {
     boolean goTime = false;
     float timeTillGo = 1f;
 
+    VisibilityToggleSystem.IVisibilityToggle visibilityToggle;
+
     public FullMenuScreen(MonsterDancer game){
         super();
         this.game = game;
 
         engine = new PooledEngine();
 
+        visibilityToggle = new TwoPlayerVisibilityToggle(game);
+
+        engine.addSystem(new VisibilityToggleSystem(visibilityToggle));
         engine.addSystem(new KeyPressedSystem());
         engine.addSystem(new StateTextureSystem());
         engine.addSystem(new RotateToSystem());
@@ -51,7 +56,7 @@ public class FullMenuScreen extends ScreenAdapter {
         createPlayers();
         createPlayerKeys();
         createTVFrame();
-        Assets.getIntroMusic().play();
+        //Assets.getIntroMusic().play();
     }
 
     private void createButtons(){
@@ -110,6 +115,7 @@ public class FullMenuScreen extends ScreenAdapter {
                 p2r = 0f;
 
         player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r);
+        player2.add(componentFactory.createToggleComponent());
         engine.addEntity(player2);
 
 
@@ -173,14 +179,14 @@ public class FullMenuScreen extends ScreenAdapter {
         createKey(wx, y, Input.Keys.W, true);
         float sy = y-2f;
         createKey(wx, sy, Input.Keys.S, true);
-        createKey(wx-2f, sy, Input.Keys.A, true);
-        createKey(wx+2f, sy, Input.Keys.D, true);
+        createKey(wx - 2f, sy, Input.Keys.A, true);
+        createKey(wx + 2f, sy, Input.Keys.D, true);
 
         float ux = World.SCREEN.x + (World.SCREEN.width/4f)*3f;
         createKey(ux, y, Input.Keys.UP, false);
         createKey(ux, sy, Input.Keys.DOWN, false);
-        createKey(ux-2f, sy, Input.Keys.LEFT, false);
-        createKey(ux+2f, sy, Input.Keys.RIGHT, false);
+        createKey(ux - 2f, sy, Input.Keys.LEFT, false);
+        createKey(ux + 2f, sy, Input.Keys.RIGHT, false);
 
     }
 
@@ -193,6 +199,11 @@ public class FullMenuScreen extends ScreenAdapter {
         stc.regions.put(States.PRESSED, Assets.getPressedKeyFrame(key, isPlayer1));
         TransformComponent tfc = componentFactory.createTransformComponent(x, y, 0.5f, 0.5f, 0f);
         KeyPressedComponent kpc = componentFactory.createKeyPressedComponent(key, States.PRESSED);
+
+        if(!isPlayer1) {
+            ToggleComponent tglc = componentFactory.createToggleComponent();
+            e.add(tglc);
+        }
 
         e.add(tc);
         e.add(sc);

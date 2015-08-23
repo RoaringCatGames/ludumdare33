@@ -71,12 +71,13 @@ public class RenderingSystem extends IteratingSystem {
 
         for (Entity entity : renderQueue) {
             TextureComponent tex = textureM.get(entity);
+            TransformComponent t = transformM.get(entity);
 
-            if (tex.region == null) {
+            if (tex.region == null || t.isHidden) {
                 continue;
             }
 
-            TransformComponent t = transformM.get(entity);
+
 
             float width = tex.region.getRegionWidth();
             float height = tex.region.getRegionHeight();

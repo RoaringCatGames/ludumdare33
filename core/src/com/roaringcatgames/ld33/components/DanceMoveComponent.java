@@ -8,4 +8,6 @@ import com.roaringcatgames.ld33.DanceMoveType;
  */
 public class DanceMoveComponent implements Component {
     public DanceMoveType moveType = DanceMoveType.KICK;
+    public boolean isPlayer1 = true;
+    public int key;
 }

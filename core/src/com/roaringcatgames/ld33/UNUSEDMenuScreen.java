@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * Created by barry on 8/22/15 @ 1:53 PM.
  */
-public class MenuScreen extends ScreenAdapter{
+public class UNUSEDMenuScreen extends ScreenAdapter{
     MonsterDancer game;
 
     OrthographicCamera guiCam;
@@ -19,7 +19,7 @@ public class MenuScreen extends ScreenAdapter{
     Rectangle playerSelectArea = new Rectangle(1060f, 90f, 106f, 107f);
     Rectangle playButtonArea = new Rectangle(400f, 90f, 400f, 200f);
 
-    public MenuScreen(MonsterDancer game){
+    public UNUSEDMenuScreen(MonsterDancer game){
         this.game = game;
         guiCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         guiCam.position.set(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2, 0);

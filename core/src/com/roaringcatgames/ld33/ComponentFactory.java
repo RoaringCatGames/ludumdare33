@@ -84,8 +84,10 @@ public class ComponentFactory {
         return player;
     }
 
-    public DanceMoveComponent createDanceMoveComponent(DanceMoveType moveType) {
+    public DanceMoveComponent createDanceMoveComponent(DanceMoveType moveType, int key, boolean isPlayer1) {
         DanceMoveComponent move = engine.createComponent(DanceMoveComponent.class);
+        move.isPlayer1 = isPlayer1;
+        move.key = key;
         move.moveType = moveType;
         return move;
     }

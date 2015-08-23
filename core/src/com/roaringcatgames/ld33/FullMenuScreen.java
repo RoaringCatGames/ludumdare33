@@ -56,7 +56,7 @@ public class FullMenuScreen extends ScreenAdapter {
         createPlayers();
         createPlayerKeys();
         createTVFrame();
-        //Assets.getIntroMusic().play();
+        Assets.getIntroMusic().play();
     }
 
     private void createButtons(){

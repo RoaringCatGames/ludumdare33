@@ -1,5 +1,6 @@
 package com.roaringcatgames.ld33;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -12,7 +13,10 @@ public class World {
     public static float CENTERX_M = WIDTH_METERS/2f;
     public static float CENTERY_M = HEIGHT_METERS/2f;
 
-    public static float SCREEN_WIDTH_M = 30f;
-
     public static Rectangle SCREEN = new Rectangle(1.875f, 2f, 28.125f, 21f);
+
+    public static float MOVE_SIZE = 2f;
+
+    public static Entity TOP_P1_MOVE;
+    public static Entity TOP_P2_MOVE;
 }

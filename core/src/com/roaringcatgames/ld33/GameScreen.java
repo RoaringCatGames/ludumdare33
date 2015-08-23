@@ -320,7 +320,7 @@ public class GameScreen extends ScreenAdapter {
         }
         float x = getDanceMoveXPosition(m.moveType, !isPlayer1);
         float y = initialY - (metersPerSecond*(m.targetMillis/1000f));
-        float scale = 0.5f; //button images are off
+        float scale = 0.5f; //button images are off scale-wise
 
         TextureComponent txc = componentFactory.createTextureComponent();
         StateComponent sc = componentFactory.createStateComponent(States.DEFAULT);

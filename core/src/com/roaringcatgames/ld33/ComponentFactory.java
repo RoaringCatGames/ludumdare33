@@ -2,6 +2,7 @@ package com.roaringcatgames.ld33;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.roaringcatgames.ld33.components.*;
 
@@ -110,6 +111,11 @@ public class ComponentFactory {
         return keypress;
     }
 
+    public TextComponent createTextComponent(BitmapFont font){
+        TextComponent text = engine.createComponent(TextComponent.class);
+        text.font = font;
+        return text;
+    }
 
     public ToggleComponent createToggleComponent() {
         return engine.createComponent(ToggleComponent.class);

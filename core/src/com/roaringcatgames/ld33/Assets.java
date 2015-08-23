@@ -3,6 +3,7 @@ package com.roaringcatgames.ld33;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
@@ -14,7 +15,9 @@ public class Assets {
 
     private static Class<TextureAtlas> TEXTURE_ATLAS = TextureAtlas.class;
     private static Class<Music> MUSIC = Music.class;
+    private static Class<BitmapFont> BITMAP_FONT = BitmapFont.class;
 
+    private static final String FONT = "fonts/courier-new-bold-32.fnt";
     private static final String ANI_ATLAS = "animations/animations.atlas";
     private static final String SPRITE_ATLAS = "sprites/sprites.atlas";
 
@@ -28,6 +31,7 @@ public class Assets {
         am.load(INTRO_MUSIC, MUSIC);
         am.load(SONG1_MUSIC, MUSIC);
         am.load(SONG2_MUSIC, MUSIC);
+        am.load(FONT, BITMAP_FONT);
         return am;
     }
 
@@ -36,6 +40,10 @@ public class Assets {
     }
     public static Music getSong1(){
         return am.get(SONG1_MUSIC);
+    }
+
+    public static BitmapFont getFont(){
+        return am.get(FONT, BITMAP_FONT);
     }
 
     public static Array<TextureAtlas.AtlasRegion> getPlayerFrames(String state, boolean...isPlayer2){

@@ -47,6 +47,9 @@ public class GameScreen extends ScreenAdapter {
     Entity bgCity;
     Entity fgCity;
 
+    Entity p1Score;
+    Entity p2Score;
+
     int playerOneScore = 0;
     int playerTwoScore = 0;
 
@@ -58,6 +61,7 @@ public class GameScreen extends ScreenAdapter {
 
         engine = new PooledEngine();
 
+
         engine.addSystem(new DanceSystem());
         engine.addSystem(new PulsingSystem());
         engine.addSystem(new AnimationSystem());
@@ -65,7 +69,10 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(new MovementSystem());
         engine.addSystem(new PlayerSystem());
         engine.addSystem(new StateTextureSystem());
-        engine.addSystem(new RenderingSystem(game.batch));
+
+        RenderingSystem rs = new RenderingSystem(game.batch);
+        engine.addSystem(rs);
+        engine.addSystem(new TextRendererSystem(game.batch));
         engine.addSystem(new DebugRenderer(game.batch, engine, engine.getSystem(RenderingSystem.class).getCamera()));
 
         componentFactory = new ComponentFactory(engine);
@@ -74,6 +81,20 @@ public class GameScreen extends ScreenAdapter {
         createPlayers();
 
         createTVFrame();
+
+        p1Score = engine.createEntity();
+        p1Score.add(componentFactory.createTextComponent(Assets.getFont()));
+
+        float x = World.SCREEN.x + 2f;
+        float y = World.HEIGHT_METERS/2f;
+        p1Score.add(componentFactory.createTransformComponent(x, y, 1f, 1f, 0f));
+        engine.addEntity(p1Score);
+
+        p2Score = engine.createEntity();
+        p2Score.add(componentFactory.createTextComponent(Assets.getFont()));
+        x = World.SCREEN.width + World.SCREEN.x - 2f;
+        p2Score.add(componentFactory.createTransformComponent(x, y, 1f, 1f, 0f));
+        engine.addEntity(p2Score);
 
         state = GAME_READY;
     }
@@ -332,7 +353,10 @@ public class GameScreen extends ScreenAdapter {
             bgCity.getComponent(StateComponent.class).set(States.DEST1);
         }
 
-        Gdx.app.log("GAME", "Scores P1: " + playerOneScore + " P2: " + playerTwoScore);
+        p1Score.getComponent(TextComponent.class).text = "" + playerOneScore;
+        p2Score.getComponent(TextComponent.class).text = "" + playerTwoScore;
+
+        //Gdx.app.log("GAME", "Scores P1: " + playerOneScore + " P2: " + playerTwoScore);
     }
 
     private void updatePaused(float deltaTime){

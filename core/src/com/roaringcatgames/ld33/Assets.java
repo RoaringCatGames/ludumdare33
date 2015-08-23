@@ -45,6 +45,9 @@ public class Assets {
         return am.get(SONG2_MUSIC);
     }
 
+    public static TextureAtlas.AtlasRegion getMoonFrame(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion("City/FannyMoon");
+    }
     public static BitmapFont getFont(){
         return am.get(FONT, BITMAP_FONT);
     }

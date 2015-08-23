@@ -101,8 +101,16 @@ public class GameScreen extends ScreenAdapter {
 
         timer = engine.createEntity();
         timer.add(componentFactory.createTextComponent(Assets.getFont()));
-        timer.add(componentFactory.createTransformComponent(World.getScreenCenter(), World.SCREEN.y + World.SCREEN.height/2f, 1f, 1f, 0f));
+        timer.add(componentFactory.createTransformComponent(World.getScreenCenter(), World.SCREEN.y + World.SCREEN.height / 2f, 1f, 1f, 0f));
         engine.addEntity(timer);
+
+        Entity moon = engine.createEntity();
+        moon.add(componentFactory.createTransformComponent(World.getScreenCenter(), World.SCREEN.y + World.SCREEN.height*(3f/4f), 0.8f, 0.8f, 0f));
+        moon.add(componentFactory.createPulseComponent(1f, 0.7f, 0.5f));
+        moon.add(componentFactory.createTextureComponent(Assets.getMoonFrame()));
+        engine.addEntity(moon);
+
+
 
         state = GAME_READY;
     }

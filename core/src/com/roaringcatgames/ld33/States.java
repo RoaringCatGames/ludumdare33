@@ -16,4 +16,11 @@ public class States {
     public static final String ONE_PLAYER = "ONE_PLAYER";
     public static final String TWO_PLAYER = "TWO_PLAYER";
     public static final String PRESSED = "PRESSED";
+
+    public static final String DEST1 = "Destroyed1";
+    public static final String DEST2 = "Destroyed2";
+    public static final String DEST3 = "Destroyed3";
+    public static final String DEST4 = "Destroyed4";
+    public static final String DEST5 = "Destroyed5";
+
 }

@@ -50,4 +50,8 @@ public class World {
         float maxOkY = _maxPerfectY + (World.MOVE_SIZE*0.5f);
         return yPos >= minOkY && yPos <= maxOkY;
     }
+
+    public static float getScreenCenter() {
+        return World.SCREEN.x + (World.SCREEN.width/2f);
+    }
 }

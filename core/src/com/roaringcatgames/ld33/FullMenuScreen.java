@@ -52,11 +52,33 @@ public class FullMenuScreen extends ScreenAdapter {
 
         componentFactory = new ComponentFactory(engine);
 
+        createBG();
+
         createButtons();
         createPlayers();
         createPlayerKeys();
         createTVFrame();
         Assets.getIntroMusic().play();
+    }
+
+    private void createBG(){
+        Entity e = engine.createEntity();
+        TextureComponent bgt = componentFactory.createTextureComponent(Assets.getBackgroundFrame());
+        TransformComponent bgtf = componentFactory.createTransformComponent(World.WIDTH_METERS/2f, World.HEIGHT_METERS/2f, 1f, 1f, 0f);
+        bgtf.position.z = 1f;
+        e.add(bgt);
+        e.add(bgtf);
+        engine.addEntity(e);
+
+        Entity t = engine.createEntity();
+        TextureComponent tt = componentFactory.createTextureComponent(Assets.getTitleFrame());
+        float tx = World.SCREEN.x + (World.SCREEN.width/2f);
+        float ty = World.HEIGHT_METERS*(5f/6f);
+        TransformComponent ttf = componentFactory.createTransformComponent(tx, ty, 0.9f, 0.9f, 0f);
+        t.add(tt);
+        t.add(ttf);
+        engine.addEntity(t);
+
     }
 
     private void createButtons(){
@@ -86,7 +108,7 @@ public class FullMenuScreen extends ScreenAdapter {
         stc.regions.put(States.PRESSED, Assets.getSpacebarFrame(States.PRESSED));
         spacebar.add(stc);
         float x = World.SCREEN.x + (World.SCREEN.width/2f);
-        float y = World.SCREEN.y + 2f;
+        float y = World.SCREEN.y + PlayerComponent.HEIGHT_M + 3.5f;//World.SCREEN.y + 2f;
         TransformComponent stfc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
         stfc.position.z = -1f;
         spacebar.add(stfc);
@@ -175,7 +197,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
     public void createPlayerKeys(){
         float wx = World.SCREEN.x + World.SCREEN.width/4f;
-        float y = World.SCREEN.y + World.SCREEN.height - 2f;
+        float y = World.SCREEN.y + PlayerComponent.HEIGHT_M + 3f;
         createKey(wx, y, Input.Keys.W, true);
         float sy = y-2f;
         createKey(wx, sy, Input.Keys.S, true);

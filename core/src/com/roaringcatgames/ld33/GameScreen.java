@@ -41,6 +41,9 @@ public class GameScreen extends ScreenAdapter {
     Array<Entity> p1Targets;
     Array<Entity> p2Targets;
 
+    Entity bgCity;
+    Entity fgCity;
+
     private int state;
 
     public GameScreen(MonsterDancer game){
@@ -61,6 +64,7 @@ public class GameScreen extends ScreenAdapter {
 
         componentFactory = new ComponentFactory(engine);
 
+        createEnvironment();
         createPlayers();
 
         createTVFrame();
@@ -68,10 +72,66 @@ public class GameScreen extends ScreenAdapter {
         state = GAME_READY;
     }
 
+    private void createEnvironment(){
+        Entity w1 = engine.createEntity();
+        w1.add(componentFactory.createTextureComponent(Assets.getFrontWave()));
+        TransformComponent waveTransform =
+                componentFactory.createTransformComponent(World.getScreenCenter(), 2.25f, 1f, 1f, 0f);
+        waveTransform.position.z = -0.91f;
+        w1.add(waveTransform);
+        engine.addEntity(w1);
+
+        Entity w2 = engine.createEntity();
+        w2.add(componentFactory.createTextureComponent(Assets.getBackWave()));
+        TransformComponent wave2Transform =
+                componentFactory.createTransformComponent(World.getScreenCenter(), 3f, 1f, 1f, 0f);
+        wave2Transform.position.z = -0.90f;
+        w2.add(wave2Transform);
+        engine.addEntity(w2);
+
+
+        Entity fgCity = engine.createEntity();
+        fgCity.add(componentFactory.createStateComponent(States.DEFAULT));
+        fgCity.add(componentFactory.createTextureComponent());
+        StateTextureComponent fgCityStates = componentFactory.createStateTextureComponent();
+        Array<TextureAtlas.AtlasRegion> fgRegions = Assets.getFrontCityFrames();
+        fgCityStates.regions.put(States.DEFAULT, fgRegions.get(0));
+        fgCityStates.regions.put(States.DEST1, fgRegions.get(1));
+        fgCityStates.regions.put(States.DEST2, fgRegions.get(2));
+        fgCityStates.regions.put(States.DEST3, fgRegions.get(3));
+        fgCityStates.regions.put(States.DEST4, fgRegions.get(4));
+        fgCityStates.regions.put(States.DEST5, fgRegions.get(5));
+        fgCity.add(fgCityStates);
+        TransformComponent fgcityTransform =
+                componentFactory.createTransformComponent(World.getScreenCenter(), 7f, 1f, 1f, 0f);
+        fgcityTransform.position.z = -0.8f;
+        fgCity.add(fgcityTransform);
+        engine.addEntity(fgCity);
+
+        Entity bgCity = engine.createEntity();
+        bgCity.add(componentFactory.createStateComponent(States.DEFAULT));
+        bgCity.add(componentFactory.createTextureComponent());
+        StateTextureComponent bgCityStates = componentFactory.createStateTextureComponent();
+        Array<TextureAtlas.AtlasRegion> bgRegions = Assets.getBackCityFrames();
+        bgCityStates.regions.put(States.DEFAULT, bgRegions.get(0));
+        bgCityStates.regions.put(States.DEST1, bgRegions.get(1));
+        bgCityStates.regions.put(States.DEST2, bgRegions.get(2));
+        bgCityStates.regions.put(States.DEST3, bgRegions.get(3));
+        bgCityStates.regions.put(States.DEST4, bgRegions.get(4));
+        bgCityStates.regions.put(States.DEST5, bgRegions.get(5));
+        bgCity.add(bgCityStates);
+        TransformComponent bgcityTransform =
+                componentFactory.createTransformComponent(World.getScreenCenter(), 8.5f, 1f, 1f, 0f);
+        bgcityTransform.position.z = -0.4f;
+        bgCity.add(bgcityTransform);
+        engine.addEntity(bgCity);
+    }
+
+
     private void createPlayers() {
 
         float   p1x = (World.SCREEN.width/4f) + World.SCREEN.x,
-                p1y = World.SCREEN.y + (PlayerComponent.HEIGHT_M/2f),
+                p1y = World.SCREEN.y + 1.5f + (PlayerComponent.HEIGHT_M/2f),
                 p1sx = 1f,
                 p1sy = 1f,
                 p1r = 0f;
@@ -81,7 +141,7 @@ public class GameScreen extends ScreenAdapter {
 
         if(game.is2Player) {
             float p2x = ((World.SCREEN.width / 4f) * 3f) + World.SCREEN.x,
-                    p2y = World.SCREEN.y + (PlayerComponent.HEIGHT_M / 2f),
+                    p2y = World.SCREEN.y + 1.5f + (PlayerComponent.HEIGHT_M / 2f),
                     p2sx = -1f,
                     p2sy = 1f,
                     p2r = 0f;
@@ -111,6 +171,7 @@ public class GameScreen extends ScreenAdapter {
         Entity e = engine.createEntity();
         TextureComponent textureComponent = componentFactory.createTextureComponent();
         TransformComponent transform = componentFactory.createTransformComponent(x, y, scaleX, scaleY, rotation);
+        transform.position.z = -0.5f;
 
         boolean isP2 = name == "P2";
         AnimationComponent aniComp = componentFactory.createAnimationComponent();

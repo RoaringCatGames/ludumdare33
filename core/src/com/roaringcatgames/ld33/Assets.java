@@ -109,6 +109,27 @@ public class Assets {
         }
     }
 
+    public static TextureAtlas.AtlasRegion getTitleFrame(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(BANNER);
+    }
+
+    public static TextureAtlas.AtlasRegion getBackgroundFrame(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(BG);
+    }
+
+    public static TextureAtlas.AtlasRegion getFrontWave(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(WAVE_1);
+    }
+    public static TextureAtlas.AtlasRegion getBackWave(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(WAVE_2);
+    }
+    public static Array<TextureAtlas.AtlasRegion> getBackCityFrames(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegions(BG_CITY);
+    }
+    public static Array<TextureAtlas.AtlasRegion> getFrontCityFrames(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegions(FG_CITY);
+    }
+
     private static String P1_FRONT = "Player1/Front/Front";
     private static String P1_PUNCH = "Player1/Punch/Punch";
     private static String P1_KICK = "Player1/Kick/Kick";
@@ -130,6 +151,13 @@ public class Assets {
     private static String TV_COVER = "tv";
     private static String KNOB = "Knob";
     private static String SPACEBAR = "SPACE";
+    private static String BANNER = "Banner";
+    private static String BG = "Background/Background";
+    private static String WAVE_1 = "City/Wave1";
+    private static String WAVE_2 = "City/Wave2";
+    private static String BG_CITY = "City/SkylineBack";
+    private static String FG_CITY = "City/SkylineFront";
+
 
     private static String A = "Keys/A";
     private static String W = "Keys/W";
@@ -139,6 +167,7 @@ public class Assets {
     private static String UP = "Keys/Up";
     private static String DOWN = "Keys/Down";
     private static String RIGHT = "Keys/Right";
+
 
     public static TextureAtlas.AtlasRegion getTargetKeyFrame(int key){
         TextureAtlas atlas = am.get(SPRITE_ATLAS, TEXTURE_ATLAS);

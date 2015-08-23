@@ -99,4 +99,11 @@ public class ComponentFactory {
     public StateTextureComponent createStateTextureComponent() {
         return engine.createComponent(StateTextureComponent.class);
     }
+
+    public KeyPressedComponent createKeyPressedComponent(int key, String state) {
+        KeyPressedComponent keypress = engine.createComponent(KeyPressedComponent.class);
+        keypress.actionKey = key;
+        keypress.targetState = state;
+        return keypress;
+    }
 }

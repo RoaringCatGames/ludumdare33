@@ -1,5 +1,6 @@
 package com.roaringcatgames.ld33;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -129,4 +130,56 @@ public class Assets {
     private static String TV_COVER = "tv";
     private static String KNOB = "Knob";
     private static String SPACEBAR = "SPACE";
+
+    private static String A = "Keys/A";
+    private static String W = "Keys/W";
+    private static String S = "Keys/S";
+    private static String D = "Keys/D";
+    private static String LEFT = "Keys/Left";
+    private static String UP = "Keys/Up";
+    private static String DOWN = "Keys/Down";
+    private static String RIGHT = "Keys/Right";
+
+
+    public static TextureAtlas.AtlasRegion getDefaultKeyFrame(int key, boolean isP1){
+        return getKeyCodeFrame(key, isP1, 0);
+    }
+
+    public static TextureAtlas.AtlasRegion getPressedKeyFrame(int key, boolean isP1){
+        return getKeyCodeFrame(key, isP1, 1);
+    }
+
+    private static TextureAtlas.AtlasRegion getKeyCodeFrame(int key, boolean isP1, int index) {
+        TextureAtlas atlas = am.get(ANI_ATLAS, TEXTURE_ATLAS);
+        String regionKey = isP1 ? "Player1/" : "Player2/";
+        TextureAtlas.AtlasRegion region = null;
+        switch(key){
+            case Input.Keys.A:
+                region = atlas.findRegions(regionKey + A).get(index);
+                break;
+            case Input.Keys.W:
+                region = atlas.findRegions(regionKey + W).get(index);
+                break;
+            case Input.Keys.S:
+                region = atlas.findRegions(regionKey + S).get(index);
+                break;
+            case Input.Keys.D:
+                region = atlas.findRegions(regionKey + D).get(index);
+                break;
+            case Input.Keys.LEFT:
+                region = atlas.findRegions(regionKey + LEFT).get(index);
+                break;
+            case Input.Keys.UP:
+                region = atlas.findRegions(regionKey + UP).get(index);
+                break;
+            case Input.Keys.DOWN:
+                region = atlas.findRegions(regionKey + DOWN).get(index);
+                break;
+            case Input.Keys.RIGHT:
+                region = atlas.findRegions(regionKey + RIGHT).get(index);
+                break;
+        }
+
+        return region;
+    }
 }

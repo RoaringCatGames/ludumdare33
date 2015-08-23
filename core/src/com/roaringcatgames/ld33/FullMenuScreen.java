@@ -34,6 +34,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
         engine = new PooledEngine();
 
+        engine.addSystem(new KeyPressedSystem());
         engine.addSystem(new StateTextureSystem());
         engine.addSystem(new RotateToSystem());
         engine.addSystem(new PulsingSystem());
@@ -48,7 +49,9 @@ public class FullMenuScreen extends ScreenAdapter {
 
         createButtons();
         createPlayers();
+        createPlayerKeys();
         createTVFrame();
+        Assets.getIntroMusic().play();
     }
 
     private void createButtons(){
@@ -162,6 +165,41 @@ public class FullMenuScreen extends ScreenAdapter {
         e.add(p1State);
 
         return e;
+    }
+
+    public void createPlayerKeys(){
+        float wx = World.SCREEN.x + World.SCREEN.width/4f;
+        float y = World.SCREEN.y + World.SCREEN.height - 2f;
+        createKey(wx, y, Input.Keys.W, true);
+        float sy = y-2f;
+        createKey(wx, sy, Input.Keys.S, true);
+        createKey(wx-2f, sy, Input.Keys.A, true);
+        createKey(wx+2f, sy, Input.Keys.D, true);
+
+        float ux = World.SCREEN.x + (World.SCREEN.width/4f)*3f;
+        createKey(ux, y, Input.Keys.UP, false);
+        createKey(ux, sy, Input.Keys.DOWN, false);
+        createKey(ux-2f, sy, Input.Keys.LEFT, false);
+        createKey(ux+2f, sy, Input.Keys.RIGHT, false);
+
+    }
+
+    private void createKey(float x, float y, int key, boolean isPlayer1){
+        Entity e = engine.createEntity();
+        TextureComponent tc = componentFactory.createTextureComponent();
+        StateComponent sc = componentFactory.createStateComponent(States.DEFAULT);
+        StateTextureComponent stc = componentFactory.createStateTextureComponent();
+        stc.regions.put(States.DEFAULT, Assets.getDefaultKeyFrame(key, isPlayer1));
+        stc.regions.put(States.PRESSED, Assets.getPressedKeyFrame(key, isPlayer1));
+        TransformComponent tfc = componentFactory.createTransformComponent(x, y, 0.5f, 0.5f, 0f);
+        KeyPressedComponent kpc = componentFactory.createKeyPressedComponent(key, States.PRESSED);
+
+        e.add(tc);
+        e.add(sc);
+        e.add(stc);
+        e.add(tfc);
+        e.add(kpc);
+        engine.addEntity(e);
     }
 
     public void createTVFrame(){

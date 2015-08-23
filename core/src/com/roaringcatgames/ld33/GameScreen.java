@@ -74,10 +74,9 @@ public class GameScreen extends ScreenAdapter {
                 p1y = World.SCREEN.y + (PlayerComponent.HEIGHT_M/2f),
                 p1sx = 1f,
                 p1sy = 1f,
-                p1r = 0f,
-                p1frameTime = 0.08f;
+                p1r = 0f;
 
-        player1 = buildPlayerEntity("P1", p1x, p1y, p1sx, p1sy, p1r, p1frameTime);
+        player1 = buildPlayerEntity("P1", p1x, p1y, p1sx, p1sy, p1r);
         engine.addEntity(player1);
 
         if(game.is2Player) {
@@ -85,35 +84,37 @@ public class GameScreen extends ScreenAdapter {
                     p2y = World.SCREEN.y + (PlayerComponent.HEIGHT_M / 2f),
                     p2sx = -1f,
                     p2sy = 1f,
-                    p2r = 0f,
-                    p2frameTime = 0.16f;
+                    p2r = 0f;
 
-            player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r, p2frameTime);
+            player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r);
             engine.addEntity(player2);
         }
 
         //MAYBE???
-        Entity sweat = engine.createEntity();
-        TextureComponent tc = componentFactory.createTextureComponent();
-        sweat.add(tc);
-        TransformComponent tfc = componentFactory.createTransformComponent(p1x - (PlayerComponent.WIDTH_M/2f), PlayerComponent.HEIGHT_M, 1f, 1f, 0f);
-        sweat.add(tfc);
-        StateComponent sc = componentFactory.createStateComponent(States.ON, true);
-        sweat.add(sc);
-        AnimationComponent ac = componentFactory.createAnimationComponent();
-        ac.animations.put(States.ON, new Animation(p1frameTime, Assets.getSweatFrames()));
-        sweat.add(ac);
-        engine.addEntity(sweat);
+//        Entity sweat = engine.createEntity();
+//        TextureComponent tc = componentFactory.createTextureComponent();
+//        sweat.add(tc);
+//        TransformComponent tfc = componentFactory.createTransformComponent(p1x - (PlayerComponent.WIDTH_M/2f), PlayerComponent.HEIGHT_M, 1f, 1f, 0f);
+//        sweat.add(tfc);
+//        StateComponent sc = componentFactory.createStateComponent(States.ON, true);
+//        sweat.add(sc);
+//        AnimationComponent ac = componentFactory.createAnimationComponent();
+//        ac.animations.put(States.ON, new Animation(p1frameTime, Assets.getSweatFrames()));
+//        sweat.add(ac);
+//        engine.addEntity(sweat);
     }
 
-    private Entity buildPlayerEntity(String name, float x, float y, float scaleX, float scaleY, float rotation, float frameTime) {
+    private Entity buildPlayerEntity(String name, float x, float y, float scaleX, float scaleY, float rotation) {
+
+        float bounceTime = 0.12f;
+        float frameTime = 0.08f;
         Entity e = engine.createEntity();
         TextureComponent textureComponent = componentFactory.createTextureComponent();
         TransformComponent transform = componentFactory.createTransformComponent(x, y, scaleX, scaleY, rotation);
 
         boolean isP2 = name == "P2";
         AnimationComponent aniComp = componentFactory.createAnimationComponent();
-        Animation ani = new Animation(frameTime, Assets.getPlayerFrames(States.DEFAULT, isP2));
+        Animation ani = new Animation(bounceTime, Assets.getPlayerFrames(States.DEFAULT, isP2));
         Animation aniKick = new Animation(frameTime, Assets.getPlayerFrames(States.KICK, isP2), Animation.PlayMode.NORMAL);
         Animation aniPunch = new Animation(frameTime, Assets.getPlayerFrames(States.PUNCH, isP2), Animation.PlayMode.NORMAL);
         Animation aniTail = new Animation(frameTime, Assets.getPlayerFrames(States.TAIL, isP2), Animation.PlayMode.NORMAL);
@@ -193,29 +194,67 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    private void updateRunning(float deltaTime){
-
-        if(Gdx.input.isKeyJustPressed(Input.Keys.A)){
-            player1.getComponent(StateComponent.class).set(States.KICK);
-        }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
-            player1.getComponent(StateComponent.class).set(States.FIRE);
-        }else if(Gdx.input.isKeyJustPressed(Input.Keys.S)){
-            player1.getComponent(StateComponent.class).set(States.TAIL);
-        }else if(Gdx.input.isKeyJustPressed(Input.Keys.D)){
-            player1.getComponent(StateComponent.class).set(States.PUNCH);
-        }
-
-        if(game.is2Player) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-                player2.getComponent(StateComponent.class).set(States.KICK);
-            } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-                player2.getComponent(StateComponent.class).set(States.FIRE);
-            } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-                player2.getComponent(StateComponent.class).set(States.TAIL);
-            } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-                player2.getComponent(StateComponent.class).set(States.PUNCH);
+    private String getActionStateFromKey(int key){
+        return key == Input.Keys.A || key == Input.Keys.LEFT ?  States.KICK :
+               key == Input.Keys.W || key == Input.Keys.UP ?    States.FIRE :
+               key == Input.Keys.S || key == Input.Keys.DOWN ?  States.TAIL :
+                                                                States.PUNCH;
+    }
+    private void checkPlayerKey(int key, Entity topMove, Entity player){
+        if(Gdx.input.isKeyJustPressed(key)){
+            if(topMove != null){
+                DanceMoveComponent dmc = topMove.getComponent(DanceMoveComponent.class);
+                BoundsComponent bc = topMove.getComponent(BoundsComponent.class);
+                if(dmc != null && bc != null) {
+                    if (dmc.key == key && World.isInPerfectRange(bc.bounds)) {
+                        player.getComponent(StateComponent.class).set(getActionStateFromKey(key));
+                    }
+                }
             }
         }
+    }
+    private void updateRunning(float deltaTime){
+
+
+        checkPlayerKey(Input.Keys.A, World.TOP_P1_MOVE, player1);
+        checkPlayerKey(Input.Keys.W, World.TOP_P1_MOVE, player1);
+        checkPlayerKey(Input.Keys.S, World.TOP_P1_MOVE, player1);
+        checkPlayerKey(Input.Keys.D, World.TOP_P1_MOVE, player1);
+        if(game.is2Player) {
+            checkPlayerKey(Input.Keys.LEFT, World.TOP_P2_MOVE, player2);
+            checkPlayerKey(Input.Keys.UP, World.TOP_P2_MOVE, player2);
+            checkPlayerKey(Input.Keys.DOWN, World.TOP_P2_MOVE, player2);
+            checkPlayerKey(Input.Keys.RIGHT, World.TOP_P2_MOVE, player2);
+        }
+
+
+//        if(Gdx.input.isKeyJustPressed(Input.Keys.A)){
+//            if(World.TOP_P1_MOVE != null){
+//                DanceMoveComponent dmc = World.TOP_P1_MOVE.getComponent(DanceMoveComponent.class);
+//                BoundsComponent bc = World.TOP_P1_MOVE.getComponent(BoundsComponent.class);
+//                if(dmc.key == Input.Keys.A && World.isInPerfectRange(bc.bounds)){
+//                    player1.getComponent(StateComponent.class).set(States.KICK);
+//                }
+//            }
+//        }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
+//            player1.getComponent(StateComponent.class).set(States.FIRE);
+//        }else if(Gdx.input.isKeyJustPressed(Input.Keys.S)){
+//            player1.getComponent(StateComponent.class).set(States.TAIL);
+//        }else if(Gdx.input.isKeyJustPressed(Input.Keys.D)){
+//            player1.getComponent(StateComponent.class).set(States.PUNCH);
+//        }
+//
+//        if(game.is2Player) {
+//            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+//                player2.getComponent(StateComponent.class).set(States.KICK);
+//            } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+//                player2.getComponent(StateComponent.class).set(States.FIRE);
+//            } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+//                player2.getComponent(StateComponent.class).set(States.TAIL);
+//            } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+//                player2.getComponent(StateComponent.class).set(States.PUNCH);
+//            }
+//        }
     }
 
     private void updatePaused(float deltaTime){
@@ -234,6 +273,22 @@ public class GameScreen extends ScreenAdapter {
 
         float y = (World.SCREEN.height + World.SCREEN.y) - (World.MOVE_SIZE*0.75f);
 
+        float rangeX = World.SCREEN.x + World.SCREEN.width/4f;
+        Entity pRange = engine.createEntity();
+
+        BoundsComponent pbounds = componentFactory.createBoundsComponent(rangeX, y, World.SCREEN.width / 4f, 0.5f);
+        TransformComponent ptransform = componentFactory.createTransformComponent(rangeX, y, 1f, 1f, 0f);
+        pRange.add(pbounds);
+        pRange.add(ptransform);
+        engine.addEntity(pRange);
+
+        Entity okRange = engine.createEntity();
+        BoundsComponent okbounds = componentFactory.createBoundsComponent(rangeX, y, World.SCREEN.width / 3f, 1f);
+        TransformComponent oktransform = componentFactory.createTransformComponent(rangeX, y, 1f, 1f, 0f);
+
+        okRange.add(okbounds);
+        okRange.add(oktransform);
+        engine.addEntity(okRange);
 
         p1Targets = new Array<Entity>();
         p2Targets = new Array<Entity>();

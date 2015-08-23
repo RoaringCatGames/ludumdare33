@@ -63,6 +63,9 @@ public class Assets {
             case States.FIRE:
                 regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FIRE);
                 break;
+            case States.WIN:
+                regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_WIN);
+                break;
             default:
                 regions = am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(P1_FRONT);
                 break;
@@ -71,16 +74,22 @@ public class Assets {
         return regions;
     }
 
+    public static Array<TextureAtlas.AtlasRegion> getSweatFrames(){
+        return am.get(ANI_ATLAS, TEXTURE_ATLAS).findRegions(SWEAT);
+    }
+
     public static TextureRegion getTVFrame(){
         return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(TV_COVER);
     }
 
 
-    private static String P1_FRONT = "Front/Front";
-    private static String P1_PUNCH = "Punch/Punch";
-    private static String P1_KICK = "Kick/Kick";
-    private static String P1_FIRE = "Fire/Fire";
-    private static String P1_TAIL = "Tail/Tail";
+    private static String P1_FRONT = "Player1/Front/Front";
+    private static String P1_PUNCH = "Player1/Punch/Punch";
+    private static String P1_KICK = "Player1/Kick/Kick";
+    private static String P1_FIRE = "Player1/Fire/Fire";
+    private static String P1_TAIL = "Player1/Tail/Tail";
+    private static String P1_WIN = "Player1/Win/Win";
+    private static String SWEAT = "Sweat";
 
     private static String INTRO_MUSIC = "music/intro.mp3";
     private static String SONG1_MUSIC = "music/hoverwhip.mp3";

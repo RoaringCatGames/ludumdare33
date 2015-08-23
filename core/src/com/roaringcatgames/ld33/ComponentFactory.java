@@ -82,4 +82,10 @@ public class ComponentFactory {
         player.name = name;
         return player;
     }
+
+    public DanceMoveComponent createDanceMoveComponent(DanceMoveType moveType) {
+        DanceMoveComponent move = engine.createComponent(DanceMoveComponent.class);
+        move.moveType = moveType;
+        return move;
+    }
 }

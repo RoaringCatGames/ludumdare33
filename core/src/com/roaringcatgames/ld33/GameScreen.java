@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.roaringcatgames.ld33.components.*;
 import com.roaringcatgames.ld33.systems.*;
 
+import javax.swing.plaf.nimbus.State;
+
 /**
  * Created by barry on 8/22/15 @ 12:36 AM.
  */
@@ -62,7 +64,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void createPlayers() {
-        float   p1x = PlayerComponent.WIDTH_M/2f,
+        float   p1x = World.WIDTH_METERS/4f, //PlayerComponent.WIDTH_M/2f,
                 p1y = PlayerComponent.HEIGHT_M/2f,
                 p1sx = 1f,
                 p1sy = 1f,
@@ -72,7 +74,7 @@ public class GameScreen extends ScreenAdapter {
         player1 = buildPlayerEntity("P1", p1x, p1y, p1sx, p1sy, p1r, p1frameTime);
         engine.addEntity(player1);
 
-        float   p2x = p1x + (1.5f*PlayerComponent.WIDTH_M),
+        float   p2x = ((World.WIDTH_METERS/4f)*3f),
                 p2y = PlayerComponent.HEIGHT_M/2f,
                 p2sx = -1f,
                 p2sy = 1f,
@@ -81,6 +83,18 @@ public class GameScreen extends ScreenAdapter {
 
         player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r, p2frameTime);
         engine.addEntity(player2);
+
+        Entity sweat = engine.createEntity();
+        TextureComponent tc = componentFactory.createTextureComponent();
+        sweat.add(tc);
+        TransformComponent tfc = componentFactory.createTransformComponent(p1x - (PlayerComponent.WIDTH_M/2f), PlayerComponent.HEIGHT_M, 1f, 1f, 0f);
+        sweat.add(tfc);
+        StateComponent sc = componentFactory.createStateComponent(States.ON, true);
+        sweat.add(sc);
+        AnimationComponent ac = componentFactory.createAnimationComponent();
+        ac.animations.put(States.ON, new Animation(p1frameTime, Assets.getSweatFrames()));
+        sweat.add(ac);
+        engine.addEntity(sweat);
     }
 
     private Entity buildPlayerEntity(String name, float x, float y, float scaleX, float scaleY, float rotation, float frameTime) {
@@ -94,11 +108,13 @@ public class GameScreen extends ScreenAdapter {
         Animation aniPunch = new Animation(frameTime, Assets.getPlayerFrames(States.PUNCH), Animation.PlayMode.NORMAL);
         Animation aniTail = new Animation(frameTime, Assets.getPlayerFrames(States.TAIL), Animation.PlayMode.NORMAL);
         Animation aniFire = new Animation(frameTime, Assets.getPlayerFrames(States.FIRE), Animation.PlayMode.NORMAL);
+        Animation aniWin = new Animation(frameTime, Assets.getPlayerFrames(States.WIN), Animation.PlayMode.LOOP);
         aniComp.animations.put(States.DEFAULT, ani);
         aniComp.animations.put(States.KICK, aniKick);
         aniComp.animations.put(States.PUNCH, aniPunch);
         aniComp.animations.put(States.TAIL, aniTail);
         aniComp.animations.put(States.FIRE, aniFire);
+        aniComp.animations.put(States.WIN, aniWin);
 
         StateComponent p1State = componentFactory.createStateComponent(States.DEFAULT, true);
 
@@ -196,10 +212,14 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void generateMoveTargets(){
+
+        float y = World.HEIGHT_METERS - MOVE_SIZE/2f;
+
+        //P1
         for(DanceMoveType dmt:moves){
             Entity e = engine.createEntity();
             float x = getDanceMoveXPosition(dmt);
-            float y = World.HEIGHT_METERS - MOVE_SIZE/2f;
+
             TransformComponent tfc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
             e.add(tfc);
             TextureComponent tc = componentFactory.createTextureComponent();
@@ -207,16 +227,28 @@ public class GameScreen extends ScreenAdapter {
             BoundsComponent bc = componentFactory.createBoundsComponent(x, y, MOVE_SIZE, MOVE_SIZE);
             e.add(bc);
             engine.addEntity(e);
+
+            Entity e2 = engine.createEntity();
+            float x2 = getDanceMoveXPosition(dmt, true);
+
+            TransformComponent tfc2 = componentFactory.createTransformComponent(x2, y, 1f, 1f, 0f);
+            e.add(tfc2);
+            TextureComponent tc2 = componentFactory.createTextureComponent();
+            e.add(tc2);
+            BoundsComponent bc2 = componentFactory.createBoundsComponent(x2, y, MOVE_SIZE, MOVE_SIZE);
+            e.add(bc2);
+            engine.addEntity(e2);
         }
     }
 
     private Song getSong(int songIndex){
 
-        Song s = new Song("s1", 1000f, 68);
+        Song s = new Song("s1", 900f, 68);
         float targetMillis = 0f;
         int index = 0;
-        for(int i = 0; i<68;i++){
-            targetMillis += 1000f;
+        float beatsInSong = s.getLengthInSeconds()*1000f/s.getMillisPerBeat();
+        for(int i = 0; i<beatsInSong;i++){
+            targetMillis += s.getMillisPerBeat();
             DanceMoveType dmt = moves[index++%4];
             s.addMove(targetMillis, dmt);
         }
@@ -258,22 +290,30 @@ public class GameScreen extends ScreenAdapter {
             MovementComponent mc = componentFactory.createMovementComponent(0f, metersPerSecond, 0f, 0f);
             e.add(mc);
 
+            DanceMoveComponent dc = componentFactory.createDanceMoveComponent(m.moveType);
+            e.add(dc);
             engine.addEntity(e);
         }
     }
 
     private float getDanceMoveXPosition(DanceMoveType moveType, boolean...isPlayer2) {
-        if(isPlayer2 != null && isPlayer2.length > 0 && isPlayer2[0]){
-            return moveType == DanceMoveType.KICK ? 21.5f :
-                   moveType == DanceMoveType.FIRE ? 18.5f :
-                   moveType == DanceMoveType.TAIL ? 15.5f :
-                                                    13.5f;
-        }else {
-            return moveType == DanceMoveType.KICK ? 2.5f :
-                   moveType == DanceMoveType.FIRE ? 5.5f :
-                   moveType == DanceMoveType.TAIL ? 8.5f :
-                                                    11.5f;
-        }
+
+        boolean isP2 = (isPlayer2 != null && isPlayer2.length > 0 && isPlayer2[0]);
+
+        float midX = World.WIDTH_METERS/4f;
+        if(isP2) { midX *= 3f; }
+
+        return moveType == DanceMoveType.KICK ? midX-(MOVE_SIZE) :
+               moveType == DanceMoveType.FIRE ? midX-(MOVE_SIZE/2f) :
+               moveType == DanceMoveType.TAIL ? midX+(MOVE_SIZE/2f) :
+                                                midX+(MOVE_SIZE);
+//        }else {
+//            float p1MidX = World.WIDTH_METERS/4f; 
+//            return moveType == DanceMoveType.KICK ? 2.5f :
+//                   moveType == DanceMoveType.FIRE ? 5.5f :
+//                   moveType == DanceMoveType.TAIL ? 8.5f :
+//                                                    11.5f;
+//        }
     }
 
     @Override

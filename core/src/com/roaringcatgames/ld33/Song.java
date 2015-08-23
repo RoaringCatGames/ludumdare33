@@ -22,7 +22,7 @@ public class Song {
         return millisPerBeat;
     }
 
-    public float getLength(){
+    public float getLengthInSeconds(){
         return lengthInSeconds;
     }
     public void  addMove(float targetMillis, DanceMoveType type){

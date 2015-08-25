@@ -124,4 +124,18 @@ public class ComponentFactory {
     public ToggleComponent createToggleComponent() {
         return engine.createComponent(ToggleComponent.class);
     }
+
+    public OvalPathComponent createOvalPathComponent(float shakeSpeed, float shakeChangeX, float shakeChangeY) {
+        OvalPathComponent opc = engine.createComponent(OvalPathComponent.class);
+        opc.xShakeSpeed = shakeSpeed;
+        opc.yShakeSpeed = shakeSpeed;
+        opc.xScale = shakeChangeX;
+        opc.yScale = shakeChangeY;
+        opc.elapsedTime = 0f;
+        return opc;
+    }
+
+    public ScreenWrapComponent createScreenWrapComonent() {
+        return engine.createComponent(ScreenWrapComponent.class);
+    }
 }

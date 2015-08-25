@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector3;
 import com.roaringcatgames.ld33.components.*;
@@ -58,7 +59,9 @@ public class FullMenuScreen extends ScreenAdapter {
         createPlayers();
         createPlayerKeys();
         createTVFrame();
-        Assets.getIntroMusic().play();
+        Music intro = Assets.getIntroMusic();
+        intro.setLooping(true);
+        intro.play();
     }
 
     private void createBG(){

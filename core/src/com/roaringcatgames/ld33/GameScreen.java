@@ -72,9 +72,9 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(new MovementSystem());
         engine.addSystem(new PlayerSystem());
         engine.addSystem(new StateTextureSystem());
-
-        RenderingSystem rs = new RenderingSystem(game.batch);
-        engine.addSystem(rs);
+        engine.addSystem(new OvalPathSystem());
+        engine.addSystem(new ScreenWrapSystem(0f, World.WIDTH_METERS));
+        engine.addSystem(new RenderingSystem(game.batch));
         engine.addSystem(new TextRendererSystem(game.batch));
         engine.addSystem(new DebugRenderer(game.batch, engine, engine.getSystem(RenderingSystem.class).getCamera()));
 
@@ -105,7 +105,7 @@ public class GameScreen extends ScreenAdapter {
         engine.addEntity(timer);
 
         Entity moon = engine.createEntity();
-        moon.add(componentFactory.createTransformComponent(World.getScreenCenter(), World.SCREEN.y + World.SCREEN.height*(3f/4f), 0.8f, 0.8f, 0f));
+        moon.add(componentFactory.createTransformComponent(World.getScreenCenter(), World.SCREEN.y + World.SCREEN.height * (3f / 4f), 0.8f, 0.8f, 0f));
         moon.add(componentFactory.createPulseComponent(1f, 0.7f, 0.5f));
         moon.add(componentFactory.createTextureComponent(Assets.getMoonFrame()));
         engine.addEntity(moon);
@@ -117,18 +117,39 @@ public class GameScreen extends ScreenAdapter {
 
     private void createEnvironment(){
         Entity w1 = engine.createEntity();
-        w1.add(componentFactory.createTextureComponent(Assets.getFrontWave()));
+        w1.add(componentFactory.createTextureComponent(Assets.getBackWave()));
         TransformComponent waveTransform =
                 componentFactory.createTransformComponent(World.getScreenCenter(), 2.25f, 1f, 1f, 0f);
-        waveTransform.position.z = -0.91f;
+        waveTransform.position.z = -0.92f;
+        OvalPathComponent waveShake = componentFactory.createOvalPathComponent(2f, 1f, 0.25f);
+        w1.add(waveShake);
         w1.add(waveTransform);
         engine.addEntity(w1);
 
+        Entity beastBoat = engine.createEntity();
+        TransformComponent boatTransform = componentFactory.createTransformComponent(2f, 4f, -1f, 1f, 0f);
+        boatTransform.position.z = -0.91f;
+        MovementComponent boatMovement = componentFactory.createMovementComponent();
+        boatMovement.velocity.x = 2f;
+        OvalPathComponent boatShake = componentFactory.createOvalPathComponent(4f, 0.1f, 0.1f);
+        TextureComponent boatTxtr = componentFactory.createTextureComponent(Assets.getBoat());
+        ScreenWrapComponent boatWrap = componentFactory.createScreenWrapComonent();
+        BoundsComponent boatBounds = componentFactory.createBoundsComponent(boatTransform.position.x, boatTransform.position.y, 3f, 1.5f);
+        beastBoat.add(boatBounds);
+        beastBoat.add(boatWrap);
+        beastBoat.add(boatTxtr);
+        beastBoat.add(boatTransform);
+        beastBoat.add(boatShake);
+        beastBoat.add(boatMovement);
+        engine.addEntity(beastBoat);
+
         Entity w2 = engine.createEntity();
-        w2.add(componentFactory.createTextureComponent(Assets.getBackWave()));
+        w2.add(componentFactory.createTextureComponent(Assets.getFrontWave()));
         TransformComponent wave2Transform =
                 componentFactory.createTransformComponent(World.getScreenCenter(), 3f, 1f, 1f, 0f);
         wave2Transform.position.z = -0.90f;
+        OvalPathComponent wave2Shake = componentFactory.createOvalPathComponent(2f, -1f, -0.25f);
+        w2.add(wave2Shake);
         w2.add(wave2Transform);
         engine.addEntity(w2);
 

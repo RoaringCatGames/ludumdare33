@@ -52,6 +52,9 @@ public class Assets {
         return am.get(FONT, BITMAP_FONT);
     }
 
+    public static TextureAtlas.AtlasRegion getBoat(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion("City/Beast");
+    }
     public static Array<TextureAtlas.AtlasRegion> getPlayerFrames(String state, boolean...isPlayer2){
         boolean isP2 = isPlayer2 != null && isPlayer2.length > 0 && isPlayer2[0];
         Array<TextureAtlas.AtlasRegion> regions;

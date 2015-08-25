@@ -111,8 +111,8 @@ public class FullMenuScreen extends ScreenAdapter {
         stc.regions.put(States.PRESSED, Assets.getSpacebarFrame(States.PRESSED));
         spacebar.add(stc);
         float x = World.SCREEN.x + (World.SCREEN.width/2f);
-        float y = World.SCREEN.y + PlayerComponent.HEIGHT_M + 3.5f;//World.SCREEN.y + 2f;
-        TransformComponent stfc = componentFactory.createTransformComponent(x, y, 1f, 1f, 0f);
+        float y = World.SCREEN.y + (PlayerComponent.HEIGHT_M*(3f/4f));//World.SCREEN.y + 2f;
+        TransformComponent stfc = componentFactory.createTransformComponent(x, y, 0.75f, 0.75f, 0f);
         stfc.position.z = -1f;
         spacebar.add(stfc);
 
@@ -224,6 +224,7 @@ public class FullMenuScreen extends ScreenAdapter {
         stc.regions.put(States.PRESSED, Assets.getPressedKeyFrame(key, isPlayer1));
         TransformComponent tfc = componentFactory.createTransformComponent(x, y, 0.5f, 0.5f, 0f);
         KeyPressedComponent kpc = componentFactory.createKeyPressedComponent(key, States.PRESSED);
+
 
         if(!isPlayer1) {
             ToggleComponent tglc = componentFactory.createToggleComponent();

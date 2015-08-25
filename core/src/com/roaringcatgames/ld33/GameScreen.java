@@ -105,8 +105,8 @@ public class GameScreen extends ScreenAdapter {
         engine.addEntity(timer);
 
         Entity moon = engine.createEntity();
-        moon.add(componentFactory.createTransformComponent(World.getScreenCenter(), World.SCREEN.y + World.SCREEN.height * (3f / 4f), 0.8f, 0.8f, 0f));
-        moon.add(componentFactory.createPulseComponent(1f, 0.7f, 0.5f));
+        moon.add(componentFactory.createTransformComponent(World.getScreenCenter(), World.SCREEN.y + World.SCREEN.height * (3f / 4f), 0.3f, 0.3f, 0f));
+        moon.add(componentFactory.createPulseComponent(0.5f, 0.3f, 0.5f));
         moon.add(componentFactory.createTextureComponent(Assets.getMoonFrame()));
         engine.addEntity(moon);
 
@@ -116,6 +116,14 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void createEnvironment(){
+        Entity e = engine.createEntity();
+        TextureComponent bgt = componentFactory.createTextureComponent(Assets.getBackgroundFrame());
+        TransformComponent bgtf = componentFactory.createTransformComponent(World.WIDTH_METERS/2f, World.HEIGHT_METERS/2f, 1f, 1f, 0f);
+        bgtf.position.z = 1f;
+        e.add(bgt);
+        e.add(bgtf);
+        engine.addEntity(e);
+
         Entity w1 = engine.createEntity();
         w1.add(componentFactory.createTextureComponent(Assets.getBackWave()));
         TransformComponent waveTransform =
@@ -589,9 +597,11 @@ public class GameScreen extends ScreenAdapter {
         MovementComponent mc = componentFactory.createMovementComponent(0f, metersPerSecond, 0f, 0f);
         DanceMoveComponent dc = componentFactory.createDanceMoveComponent(m.moveType, key, isPlayer1);
         StateTextureComponent stc = componentFactory.createStateTextureComponent();
+        PulseComponent pc = componentFactory.createPulseComponent(0.7f, 0.5f, 0f);
         stc.regions.put(States.DEFAULT, Assets.getDefaultKeyFrame(key, isPlayer1));
         stc.regions.put(States.PRESSED, Assets.getPressedKeyFrame(key, isPlayer1));
 
+        e.add(pc);
         e.add(dc);
         e.add(mc);
         e.add(bc);
@@ -657,7 +667,9 @@ public class GameScreen extends ScreenAdapter {
 
                 if(pointsScored > 0){
                     StateComponent sc = topMove.getComponent(StateComponent.class);
+                    PulseComponent pc = topMove.getComponent(PulseComponent.class);
                     sc.set(States.PRESSED);
+                    pc.pulseSpeed = 2f;
                 }
             }
         }

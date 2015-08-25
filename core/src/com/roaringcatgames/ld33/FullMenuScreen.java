@@ -145,17 +145,17 @@ public class FullMenuScreen extends ScreenAdapter {
 
 
         //MAYBE???
-        Entity sweat = engine.createEntity();
-        TextureComponent tc = componentFactory.createTextureComponent();
-        sweat.add(tc);
-        TransformComponent tfc = componentFactory.createTransformComponent(p1x - (PlayerComponent.WIDTH_M/2f), PlayerComponent.HEIGHT_M, 1f, 1f, 0f);
-        sweat.add(tfc);
-        StateComponent sc = componentFactory.createStateComponent(States.ON, true);
-        sweat.add(sc);
-        AnimationComponent ac = componentFactory.createAnimationComponent();
-        ac.animations.put(States.ON, new Animation(0.08f, Assets.getSweatFrames()));
-        sweat.add(ac);
-        engine.addEntity(sweat);
+//        Entity sweat = engine.createEntity();
+//        TextureComponent tc = componentFactory.createTextureComponent();
+//        sweat.add(tc);
+//        TransformComponent tfc = componentFactory.createTransformComponent(p1x - (PlayerComponent.WIDTH_M/2f), PlayerComponent.HEIGHT_M, 1f, 1f, 0f);
+//        sweat.add(tfc);
+//        StateComponent sc = componentFactory.createStateComponent(States.ON, true);
+//        sweat.add(sc);
+//        AnimationComponent ac = componentFactory.createAnimationComponent();
+//        ac.animations.put(States.ON, new Animation(0.08f, Assets.getSweatFrames()));
+//        sweat.add(ac);
+//        engine.addEntity(sweat);
     }
 
     private Entity buildPlayerEntity(String name, float x, float y, float scaleX, float scaleY, float rotation) {

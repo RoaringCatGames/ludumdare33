@@ -1,8 +1,10 @@
 package com.roaringcatgames.ld33;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -21,8 +23,14 @@ public class Assets {
     private static final String ANI_ATLAS = "animations/animations.atlas";
     private static final String SPRITE_ATLAS = "sprites/sprites.atlas";
 
+
+    public static TextureRegion splashScreen;
+
     public static AssetManager am;
 
+    public static void loadSplash() {
+        splashScreen = new TextureRegion(new Texture(Gdx.files.internal("splash.jpg")));
+    }
     public static AssetManager load(){
         am = new AssetManager();
 
@@ -260,4 +268,6 @@ public class Assets {
 
         return region;
     }
+
+
 }

@@ -16,7 +16,9 @@ public class MonsterDancer extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 
+		Assets.loadSplash();
 		am = Assets.load();
+		setScreen(new SplashScreen(batch));
 	}
 
 	@Override

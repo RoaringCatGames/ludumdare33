@@ -66,7 +66,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
     private void createBG(){
         Entity e = engine.createEntity();
-        TextureComponent bgt = componentFactory.createTextureComponent(Assets.getBackgroundFrame());
+        TextureComponent bgt = componentFactory.createTextureComponent(Assets.getMenuBackground());
         TransformComponent bgtf = componentFactory.createTransformComponent(World.WIDTH_METERS/2f, World.HEIGHT_METERS/2f, 1f, 1f, 0f);
         bgtf.position.z = 1f;
         e.add(bgt);

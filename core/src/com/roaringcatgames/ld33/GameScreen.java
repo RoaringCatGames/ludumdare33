@@ -124,6 +124,15 @@ public class GameScreen extends ScreenAdapter {
         e.add(bgtf);
         engine.addEntity(e);
 
+        Entity knob = engine.createEntity();
+        TextureComponent tc = componentFactory.createTextureComponent(Assets.getSelectKnob());
+        knob.add(tc);
+        float rotation = game.is2Player ? 180f : 0f;
+        TransformComponent tfc = componentFactory.createTransformComponent(34.8f, 4.8f, 1f, 1f, rotation);
+        tfc.position.set(tfc.position.x, tfc.position.y, -1.1f);
+        knob.add(tfc);
+        engine.addEntity(knob);
+
         Entity w1 = engine.createEntity();
         w1.add(componentFactory.createTextureComponent(Assets.getBackWave()));
         TransformComponent waveTransform =

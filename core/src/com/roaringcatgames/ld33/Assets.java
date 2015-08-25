@@ -142,6 +142,10 @@ public class Assets {
         return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(BG);
     }
 
+    public static TextureAtlas.AtlasRegion getMenuBackground(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(BG_MENU);
+    }
+
     public static TextureAtlas.AtlasRegion getFrontWave(){
         return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(WAVE_1);
     }
@@ -178,6 +182,7 @@ public class Assets {
     private static String SPACEBAR = "SPACE";
     private static String BANNER = "Banner";
     private static String BG = "Background/Background";
+    private static String BG_MENU = "Background/Background1";
     private static String WAVE_1 = "City/Wave1";
     private static String WAVE_2 = "City/Wave2";
     private static String BG_CITY = "City/SkylineBack";

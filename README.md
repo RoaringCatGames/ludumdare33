@@ -5,5 +5,14 @@ Our Entry for Ludum Dare 33. Teach these Monsters to Destroy, Jazzercise style!
 
 Music By:
 Intro - Yubatake <a href="http://opengameart.org/content/80s-tv-theme">Song</a>
+
 Song 1 -  BossLevelVGM <a href="http://BossLevelVGM.com">BossLevelVGM</a> <a href="http://opengameart.org/content/hoverwhip">Song</a>
+
 Song 2 -  FoxySynergy <a href="http://opengameart.org/content/cluster-block">Song</a>
+
+# Development
+
+Pack Textures and Run the game
+```
+./gradlew :texture-packer:run :desktop:run
+```

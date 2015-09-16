@@ -117,7 +117,7 @@ public class GameScreen extends ScreenAdapter {
 
     private void createEnvironment(){
         Entity e = engine.createEntity();
-        TextureComponent bgt = componentFactory.createTextureComponent(Assets.getBackgroundFrame());
+        RCGTextureComponent bgt = componentFactory.createTextureComponent(Assets.getBackgroundFrame());
         TransformComponent bgtf = componentFactory.createTransformComponent(World.WIDTH_METERS/2f, World.HEIGHT_METERS/2f, 1f, 1f, 0f);
         bgtf.position.z = 1f;
         e.add(bgt);
@@ -125,7 +125,7 @@ public class GameScreen extends ScreenAdapter {
         engine.addEntity(e);
 
         Entity knob = engine.createEntity();
-        TextureComponent tc = componentFactory.createTextureComponent(Assets.getSelectKnob());
+        RCGTextureComponent tc = componentFactory.createTextureComponent(Assets.getSelectKnob());
         knob.add(tc);
         float rotation = game.is2Player ? 180f : 0f;
         TransformComponent tfc = componentFactory.createTransformComponent(34.8f, 4.8f, 1f, 1f, rotation);
@@ -149,7 +149,7 @@ public class GameScreen extends ScreenAdapter {
         MovementComponent boatMovement = componentFactory.createMovementComponent();
         boatMovement.velocity.x = 2f;
         OvalPathComponent boatShake = componentFactory.createOvalPathComponent(4f, 0.1f, 0.1f);
-        TextureComponent boatTxtr = componentFactory.createTextureComponent(Assets.getBoat());
+        RCGTextureComponent boatTxtr = componentFactory.createTextureComponent(Assets.getBoat());
         ScreenWrapComponent boatWrap = componentFactory.createScreenWrapComonent();
         BoundsComponent boatBounds = componentFactory.createBoundsComponent(boatTransform.position.x, boatTransform.position.y, 3f, 1.5f);
         beastBoat.add(boatBounds);
@@ -233,7 +233,7 @@ public class GameScreen extends ScreenAdapter {
 
         //MAYBE???
 //        Entity sweat = engine.createEntity();
-//        TextureComponent tc = componentFactory.createTextureComponent();
+//        RCGTextureComponent tc = componentFactory.createTextureComponent();
 //        sweat.add(tc);
 //        TransformComponent tfc = componentFactory.createTransformComponent(p1x - (PlayerComponent.WIDTH_M/2f), PlayerComponent.HEIGHT_M, 1f, 1f, 0f);
 //        sweat.add(tfc);
@@ -251,7 +251,7 @@ public class GameScreen extends ScreenAdapter {
         float frameTime = 0.08f;
         float winFrameTime = 0.16f;
         Entity e = engine.createEntity();
-        TextureComponent textureComponent = componentFactory.createTextureComponent();
+        RCGTextureComponent textureComponent = componentFactory.createTextureComponent();
         TransformComponent transform = componentFactory.createTransformComponent(x, y, scaleX, scaleY, rotation);
         transform.position.z = -0.5f;
 
@@ -289,7 +289,7 @@ public class GameScreen extends ScreenAdapter {
 
     public void createTVFrame(){
         Entity e = engine.createEntity();
-        TextureComponent tc = componentFactory.createTextureComponent(Assets.getTVFrame());
+        RCGTextureComponent tc = componentFactory.createTextureComponent(Assets.getTVFrame());
         e.add(tc);
         TransformComponent tfc = componentFactory.createTransformComponent(World.CENTERX_M, World.CENTERY_M, 1f, 1f, 0f);
         tfc.position.set(tfc.position.x, tfc.position.y, -1f);
@@ -298,6 +298,10 @@ public class GameScreen extends ScreenAdapter {
     }
 
     public void update(float deltaTime){
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            Gdx.app.exit();
+        }
         if (deltaTime > 0.1f) deltaTime = 0.1f;
 
         engine.update(deltaTime);
@@ -515,7 +519,7 @@ public class GameScreen extends ScreenAdapter {
             e.add(tfc);
             TextureAtlas.AtlasRegion region = Assets.getTargetKeyFrame(key);
             Gdx.app.log("GAME", "Target Region:" + region.name);
-            TextureComponent tc = componentFactory.createTextureComponent(Assets.getTargetKeyFrame(key));
+            RCGTextureComponent tc = componentFactory.createTextureComponent(Assets.getTargetKeyFrame(key));
             e.add(tc);
             BoundsComponent bc = componentFactory.createBoundsComponent(x, y, World.MOVE_SIZE, World.MOVE_SIZE);
             e.add(bc);
@@ -532,7 +536,7 @@ public class GameScreen extends ScreenAdapter {
                 e2.add(tfc2);
                 region = Assets.getTargetKeyFrame(key2);
                 Gdx.app.log("GAME", "Target Region:" + region.name);
-                TextureComponent tc2 = componentFactory.createTextureComponent(region);
+                RCGTextureComponent tc2 = componentFactory.createTextureComponent(region);
                 e2.add(tc2);
                 BoundsComponent bc2 = componentFactory.createBoundsComponent(x2, y, World.MOVE_SIZE, World.MOVE_SIZE);
                 e2.add(bc2);
@@ -599,7 +603,7 @@ public class GameScreen extends ScreenAdapter {
         float y = initialY - (metersPerSecond*(m.targetMillis/1000f));
         float scale = 0.5f; //button images are off scale-wise
 
-        TextureComponent txc = componentFactory.createTextureComponent();
+        RCGTextureComponent txc = componentFactory.createTextureComponent();
         StateComponent sc = componentFactory.createStateComponent(States.DEFAULT);
         TransformComponent tc = componentFactory.createTransformComponent(x, y, scale, scale, 0f);
         BoundsComponent bc = componentFactory.createBoundsComponent(tc.position.x, tc.position.y, World.MOVE_SIZE, World.MOVE_SIZE);

@@ -4,8 +4,6 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.roaringcatgames.ld33.World;
 import com.roaringcatgames.ld33.components.*;
@@ -28,7 +26,7 @@ public class DanceSystem extends IteratingSystem {
     public DanceSystem(){
         super(Family.all(DanceMoveComponent.class,
                          BoundsComponent.class,
-                         TextureComponent.class,
+                         RCGTextureComponent.class,
                          StateComponent.class,
                          StateTextureComponent.class,
                          MovementComponent.class).get());

@@ -66,7 +66,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
     private void createBG(){
         Entity e = engine.createEntity();
-        TextureComponent bgt = componentFactory.createTextureComponent(Assets.getMenuBackground());
+        RCGTextureComponent bgt = componentFactory.createTextureComponent(Assets.getMenuBackground());
         TransformComponent bgtf = componentFactory.createTransformComponent(World.WIDTH_METERS/2f, World.HEIGHT_METERS/2f, 1f, 1f, 0f);
         bgtf.position.z = 1f;
         e.add(bgt);
@@ -74,7 +74,7 @@ public class FullMenuScreen extends ScreenAdapter {
         engine.addEntity(e);
 
         Entity t = engine.createEntity();
-        TextureComponent tt = componentFactory.createTextureComponent(Assets.getTitleFrame());
+        RCGTextureComponent tt = componentFactory.createTextureComponent(Assets.getTitleFrame());
         float tx = World.SCREEN.x + (World.SCREEN.width/2f);
         float ty = World.HEIGHT_METERS*(5f/6f);
         TransformComponent ttf = componentFactory.createTransformComponent(tx, ty, 0.9f, 0.9f, 0f);
@@ -87,7 +87,7 @@ public class FullMenuScreen extends ScreenAdapter {
     private void createButtons(){
         //Knob
         knob = engine.createEntity();
-        TextureComponent tc = componentFactory.createTextureComponent(Assets.getSelectKnob());
+        RCGTextureComponent tc = componentFactory.createTextureComponent(Assets.getSelectKnob());
         knob.add(tc);
         TransformComponent tfc = componentFactory.createTransformComponent(34.8f, 4.8f, 1f, 1f, 0f);
         tfc.position.set(tfc.position.x, tfc.position.y, -1.1f);
@@ -102,7 +102,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
         //SpaceBar
         spacebar = engine.createEntity();
-        TextureComponent txc = componentFactory.createTextureComponent();
+        RCGTextureComponent txc = componentFactory.createTextureComponent();
         spacebar.add(txc);
         StateComponent ssc = componentFactory.createStateComponent(States.DEFAULT);
         spacebar.add(ssc);
@@ -146,7 +146,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
         //MAYBE???
 //        Entity sweat = engine.createEntity();
-//        TextureComponent tc = componentFactory.createTextureComponent();
+//        RCGTextureComponent tc = componentFactory.createTextureComponent();
 //        sweat.add(tc);
 //        TransformComponent tfc = componentFactory.createTransformComponent(p1x - (PlayerComponent.WIDTH_M/2f), PlayerComponent.HEIGHT_M, 1f, 1f, 0f);
 //        sweat.add(tfc);
@@ -163,7 +163,7 @@ public class FullMenuScreen extends ScreenAdapter {
         float bounceTime = 0.12f;
         float frameTime = 0.08f;
         Entity e = engine.createEntity();
-        TextureComponent textureComponent = componentFactory.createTextureComponent();
+        RCGTextureComponent textureComponent = componentFactory.createTextureComponent();
         TransformComponent transform = componentFactory.createTransformComponent(x, y, scaleX, scaleY, rotation);
 
         boolean isP2 = name == "P2";
@@ -217,7 +217,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
     private void createKey(float x, float y, int key, boolean isPlayer1){
         Entity e = engine.createEntity();
-        TextureComponent tc = componentFactory.createTextureComponent();
+        RCGTextureComponent tc = componentFactory.createTextureComponent();
         StateComponent sc = componentFactory.createStateComponent(States.DEFAULT);
         StateTextureComponent stc = componentFactory.createStateTextureComponent();
         stc.regions.put(States.DEFAULT, Assets.getDefaultKeyFrame(key, isPlayer1));
@@ -241,7 +241,7 @@ public class FullMenuScreen extends ScreenAdapter {
 
     public void createTVFrame(){
         Entity e = engine.createEntity();
-        TextureComponent tc = componentFactory.createTextureComponent(Assets.getTVFrame());
+        RCGTextureComponent tc = componentFactory.createTextureComponent(Assets.getTVFrame());
         e.add(tc);
         TransformComponent tfc = componentFactory.createTransformComponent(World.CENTERX_M, World.CENTERY_M, 1f, 1f, 0f);
         tfc.position.set(tfc.position.x, tfc.position.y, -1f);
@@ -250,6 +250,9 @@ public class FullMenuScreen extends ScreenAdapter {
     }
 
     public void update(float deltaTime){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            Gdx.app.exit();
+        }
         if (deltaTime > 0.1f) deltaTime = 0.1f;
 
         engine.update(deltaTime);

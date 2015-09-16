@@ -34,58 +34,75 @@
 <script src="soundmanager2-jsmin.js"></script>
 </head>
 
-       <body>
-           <div style="float: left; margin: 20px; max-width: 250px;">
-               <div align="center">
-                   <img align="center" src="gamedevlou-logo-med.png" alt="http://gamedevlou.org" width="175" height="168" />
-               </div>
-               <h2 align="center">Saturday Morning Destruction</h2>
-               <h3 align="center">Ludum Dare 33 Entry</h3>
-               <h5 align="center">
-                   As a monster, destruction doesn't always come naturally. So in the 80s, it became popular for young monsters to learn the proper destruction techniques through the power of dance. Many a morning were spent by young beastlies watching the proper techniques to destroy. You must make sure you provide a great show to teach the next generation how to become the best monster they can be.
-               </h5>
-               <hr align="center" width="90%" />
-               <p align="center"><strong>controls:</strong></p>
-               <ul id="controls">
-                   <li>Player 1 - WASD</li>
-                   <li>Player 2 -  ←↑↓→</li>
-                   <li>Just Match the Dance Patterns</li>
-               </ul>
-               <hr align="center" width="90%" />
-               <div align="center"><a href="http://roaringcatgames.com">Roaring Cat Games</a><a href="http://gamedevlou.org">GameDevLou</a></div>
-               <div align="center">Art: <a href="http://twitter.com/loilemix">Loi LeMix</a></div>
-               <div align="center">Programming: <a href="http://twitter.com/barryrowe">@barryrowe</a></div>
-               <div align="center">Music: <a href="http://opengameart.org/users/foxsynergy">FoxSynergy</a></div>
-               <div align="center"><a href="http://twitter.com/@GameDevLouKY">@GameDevLouKY</a></div>
-               <div align="center"><a href="http://ludumdare.com/compo">Ludum Dare Entry</a></div>
-           </div>
-           <div align="left" id="embed-html"></div>
-           <script type="text/javascript" src="html/html.nocache.js"></script>
-       </body>
+<body>
+<div style="float: left; margin: 20px; max-width: 250px;">
+    <div align="center">
+        <img align="center" src="http://roaringcatgames.com/images/logo_orange.png" alt="http://roaringcatgames.com" width="175" height="123" />
+    </div>
+    <h2 align="center">Saturday Morning Destruction</h2>
+    <h3 align="center"><a href="http://ludumdare.com/compo/ludum-dare-33/?action=preview&uid=58120">Ludum Dare 33 Entry</a></h3>
+    <h5 align="center">
+        As a monster, destruction doesn't always come naturally. So in the 80s, it became popular for young monsters to learn the proper destruction techniques through the power of dance. Many a morning were spent by young beastlies watching the proper techniques to destroy. You must make sure you provide a great show to teach the next generation how to become the best monster they can be.
+    </h5>
+    <hr align="center" width="90%" />
+    <p align="center"><strong>controls:</strong></p>
+    <ul id="controls">
+        <li>Player 1 - WASD</li>
+        <li>Player 2 -  ←↑↓→</li>
+        <li>Just Match the Dance Patterns</li>
+    </ul>
+    <hr align="center" width="90%" />
+    <div align="center"><a href="http://roaringcatgames.com">Roaring Cat Games</a><a href="http://gamedevlou.org">GameDevLou</a></div>
+    <div align="center">Art: <a href="http://twitter.com/loilemix">Loi LeMix</a></div>
+    <div align="center">Programming: <a href="http://twitter.com/barryrowe">@barryrowe</a></div>
+    <div align="center">Music:</div>
+    <div align="center">
+        <a href="http://opengameart.org/content/80s-tv-theme">Yubatake (intro)</a>
+        <a href="http://opengameart.org/content/hoverwhip">BossLevelVGM (Song 1)</a>
+        <a href="http://opengameart.org/users/foxsynergy">FoxSynergy (Song 2)</a>
+    </div>
+    <div align="center"><a href="http://twitter.com/@GameDevLouKY">@GameDevLouKY</a></div>
+    <div align="center"><a href="http://ludumdare.com/compo">A Ludum Dare Entry</a></div>
+</div>
+<div align="left" id="embed-html"></div>
+<script type="text/javascript" src="html/html.nocache.js"></script>
+</body>
 
-        <script>
-            function handleMouseDown(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                evt.target.style.cursor = 'default';
-            }
+<script>
+    function handleMouseDown(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        evt.target.style.cursor = 'default';
+    }
 
-            function handleMouseUp(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                evt.target.style.cursor = '';
-            }
-            document.getElementById('embed-html').addEventListener('mousedown', handleMouseDown, false);
-            document.getElementById('embed-html').addEventListener('mouseup', handleMouseUp, false);
-        </script>
+    function handleMouseUp(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        evt.target.style.cursor = '';
+    }
+    document.getElementById('embed-html').addEventListener('mousedown', handleMouseDown, false);
+    document.getElementById('embed-html').addEventListener('mouseup', handleMouseUp, false);
 
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    window.onkeydown = function(e) {
+        if((e.keyCode == 32 && e.target == document.body) ||
+           (e.keyCode == 9 && e.target == document.body)  ||
+           (e.keyCode == 37 && e.target == document.body)  ||
+           (e.keyCode == 38 && e.target == document.body)  ||
+           (e.keyCode == 39 && e.target == document.body)  ||
+           (e.keyCode == 40 && e.target == document.body)) {
+            e.preventDefault();
+            return false;
+        }
+    };
+</script>
 
-            ga('create', 'UA-51511895-1', 'pineapplepiranha.com');
-            ga('send', 'pageview');
-        </script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-51511895-1', 'pineapplepiranha.com');
+    ga('send', 'pageview');
+</script>
 </html>

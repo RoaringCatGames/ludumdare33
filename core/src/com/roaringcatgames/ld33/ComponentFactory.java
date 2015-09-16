@@ -1,6 +1,5 @@
 package com.roaringcatgames.ld33;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,13 +15,13 @@ public class ComponentFactory {
         this.engine = e;
     }
 
-    public TextureComponent createTextureComponent(){
+    public RCGTextureComponent createTextureComponent(){
         return createTextureComponent(null);
     }
 
 
-    public TextureComponent createTextureComponent(TextureRegion region){
-        TextureComponent comp = engine.createComponent(TextureComponent.class);
+    public RCGTextureComponent createTextureComponent(TextureRegion region){
+        RCGTextureComponent comp = engine.createComponent(RCGTextureComponent.class);
         if(region != null){
             comp.region = region;
         }

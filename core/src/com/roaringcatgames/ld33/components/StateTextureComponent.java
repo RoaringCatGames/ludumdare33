@@ -7,6 +7,6 @@ import java.util.HashMap;
 /**
  * Created by barry on 8/23/15 @ 1:06 AM.
  */
-public class StateTextureComponent extends TextureComponent {
+public class StateTextureComponent extends RCGTextureComponent {
     public HashMap<String, TextureRegion> regions = new HashMap<>();
 }

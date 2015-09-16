@@ -4,12 +4,10 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.roaringcatgames.ld33.components.TextureComponent;
+import com.roaringcatgames.ld33.components.RCGTextureComponent;
 import com.roaringcatgames.ld33.components.TransformComponent;
 
 import java.util.Comparator;
@@ -33,13 +31,13 @@ public class RenderingSystem extends IteratingSystem {
     private Comparator<Entity> comparator;
     private OrthographicCamera cam;
 
-    private ComponentMapper<TextureComponent> textureM;
+    private ComponentMapper<RCGTextureComponent> textureM;
     private ComponentMapper<TransformComponent> transformM;
 
     public RenderingSystem(SpriteBatch batch) {
-        super(Family.all(TransformComponent.class, TextureComponent.class).get());
+        super(Family.all(TransformComponent.class, RCGTextureComponent.class).get());
 
-        textureM = ComponentMapper.getFor(TextureComponent.class);
+        textureM = ComponentMapper.getFor(RCGTextureComponent.class);
         transformM = ComponentMapper.getFor(TransformComponent.class);
 
         renderQueue = new Array<Entity>();
@@ -70,7 +68,7 @@ public class RenderingSystem extends IteratingSystem {
         batch.begin();
 
         for (Entity entity : renderQueue) {
-            TextureComponent tex = textureM.get(entity);
+            RCGTextureComponent tex = textureM.get(entity);
             TransformComponent t = transformM.get(entity);
 
             if (tex.region == null || t.isHidden) {

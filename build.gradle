@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://github.com/steffenschaefer/gwt-gradle-plugin/raw/maven-repo/" }
         jcenter()
     }
     dependencies {

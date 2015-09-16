@@ -6,6 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 /**
  * Created by barry on 8/18/15 @ 8:29 PM.
  */
-public class TextureComponent implements Component {
+public class RCGTextureComponent implements Component {
     public TextureRegion region = null;
 }

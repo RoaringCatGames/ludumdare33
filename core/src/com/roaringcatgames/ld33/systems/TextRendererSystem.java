@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.roaringcatgames.ld33.components.TextComponent;
@@ -39,6 +40,7 @@ public class TextRendererSystem extends IteratingSystem {
 
         cam.update();
         batch.setProjectionMatrix(cam.combined);
+        batch.enableBlending();
         batch.begin();
 
         for(Entity entity:renderQueue) {
@@ -46,8 +48,10 @@ public class TextRendererSystem extends IteratingSystem {
             TransformComponent transform = tfm.get(entity);
 
             if (text.text != null && !transform.isHidden) {
-
-                text.font.draw(batch, text.text, (transform.position.x)*32f, transform.position.y*32f);
+                GlyphLayout textData = new GlyphLayout(text.font, text.text);
+                float xTranslatedPosition = ((transform.position.x)*(cam.viewportWidth/37.5f))-(textData.width/2f);
+                float yTranslatedPosition = ((transform.position.y)*(cam.viewportHeight/25f))-(textData.height/2f);
+                text.font.draw(batch, textData, xTranslatedPosition, yTranslatedPosition);
             }
         }
 

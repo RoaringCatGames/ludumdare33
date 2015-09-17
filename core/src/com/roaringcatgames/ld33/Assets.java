@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -18,6 +19,7 @@ public class Assets {
     private static Class<TextureAtlas> TEXTURE_ATLAS = TextureAtlas.class;
     private static Class<Music> MUSIC = Music.class;
     private static Class<BitmapFont> BITMAP_FONT = BitmapFont.class;
+    private static Class<Sound> SOUND = Sound.class;
 
     private static final String FONT = "fonts/courier-new-bold-32.fnt";
     private static final String ANI_ATLAS = "animations/animations.atlas";
@@ -40,6 +42,9 @@ public class Assets {
         am.load(SONG1_MUSIC, MUSIC);
         am.load(SONG2_MUSIC, MUSIC);
         am.load(FONT, BITMAP_FONT);
+        am.load(SFX_OK, SOUND);
+        am.load(SFX_GOOD, SOUND);
+        am.load(SFX_BAD, SOUND);
         return am;
     }
 
@@ -52,6 +57,10 @@ public class Assets {
     public static Music getSong2(){
         return am.get(SONG2_MUSIC);
     }
+
+    public static Sound getGoodSound(){ return am.get(SFX_GOOD, SOUND); }
+    public static Sound getOkSound(){ return am.get(SFX_OK, SOUND); }
+    public static Sound getBadSound(){ return am.get(SFX_BAD, SOUND); }
 
     public static TextureAtlas.AtlasRegion getMoonFrame(){
         return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion("City/FannyMoon");
@@ -177,6 +186,9 @@ public class Assets {
     private static String INTRO_MUSIC = "music/intro.mp3";
     private static String SONG1_MUSIC = "music/hoverwhip.mp3";
     private static String SONG2_MUSIC = "music/clusterblock.mp3";
+    private static String SFX_OK = "music/ok.mp3";
+    private static String SFX_GOOD = "music/good.mp3";
+    private static String SFX_BAD = "music/bad.mp3";
     private static String TV_COVER = "tv";
     private static String KNOB = "Knob";
     private static String SPACEBAR = "SPACE";

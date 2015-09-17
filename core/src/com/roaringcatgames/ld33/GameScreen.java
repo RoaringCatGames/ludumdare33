@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector3;
@@ -58,12 +59,19 @@ public class GameScreen extends ScreenAdapter {
 
     private int state;
 
+    private Sound ok;
+    private Sound good;
+    private Sound bad;
+
     public GameScreen(MonsterDancer game){
         super();
         this.game = game;
 
         engine = new PooledEngine();
 
+        ok = Assets.getOkSound();
+        good = Assets.getGoodSound();
+        bad = Assets.getBadSound();
 
         engine.addSystem(new DanceSystem());
         engine.addSystem(new PulsingSystem());
@@ -338,7 +346,9 @@ public class GameScreen extends ScreenAdapter {
         if(countDown <= 0f){
             countDown = 3f;
             timer.getComponent(TransformComponent.class).isHidden = true;
-            generateMoveTargets();
+            if(songIndex < 1) {
+                generateMoveTargets();
+            }
             currentSongData = getSong(songIndex);
             generateDanceMoves(currentSongData);
 
@@ -445,7 +455,7 @@ public class GameScreen extends ScreenAdapter {
                 nextSongBtn = engine.createEntity();
                 nextSongBtn.add(componentFactory.createBoundsComponent(nextX, nextY, nextW, 3f));
                 nextSongBtn.add(componentFactory.createTransformComponent(nextX, nextY, 1f, 1f, 0f));
-                nextSongBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Next Song"));
+                nextSongBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Next Song (Space)"));
                 engine.addEntity(nextSongBtn);
             }
 
@@ -455,11 +465,23 @@ public class GameScreen extends ScreenAdapter {
             backBtn = engine.createEntity();
             backBtn.add(componentFactory.createBoundsComponent(backX, backY, backW, 3f));
             backBtn.add(componentFactory.createTransformComponent(backX, backY, 1f, 1f, 0f));
-            backBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Menu"));
+            backBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Menu (Backspace)"));
             engine.addEntity(backBtn);
 
         }
 
+        if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
+            currentSong.stop();
+            game.setScreen(new FullMenuScreen(game));
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && songIndex < 1 && nextSongBtn != null){
+            if(nextSongBtn != null)
+                engine.removeEntity(nextSongBtn);
+            if(backBtn != null)
+                engine.removeEntity(backBtn);
+            songIndex++;
+            timer.getComponent(TransformComponent.class).isHidden = false;
+            state = GAME_READY;
+        }
         if (Gdx.input.justTouched()) {
             engine.getSystem(RenderingSystem.class).getCamera().unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
             BoundsComponent backBnds = backBtn.getComponent(BoundsComponent.class);
@@ -517,8 +539,6 @@ public class GameScreen extends ScreenAdapter {
             int key = getKeyFromMoveType(dmt, true);
             TransformComponent tfc = componentFactory.createTransformComponent(x, y, 0.5f, 0.5f, 0f);
             e.add(tfc);
-            TextureAtlas.AtlasRegion region = Assets.getTargetKeyFrame(key);
-            Gdx.app.log("GAME", "Target Region:" + region.name);
             RCGTextureComponent tc = componentFactory.createTextureComponent(Assets.getTargetKeyFrame(key));
             e.add(tc);
             BoundsComponent bc = componentFactory.createBoundsComponent(x, y, World.MOVE_SIZE, World.MOVE_SIZE);
@@ -534,9 +554,7 @@ public class GameScreen extends ScreenAdapter {
                 int key2 = getKeyFromMoveType(dmt, false);
                 TransformComponent tfc2 = componentFactory.createTransformComponent(x2, y, 0.5f, 0.5f, 0f);
                 e2.add(tfc2);
-                region = Assets.getTargetKeyFrame(key2);
-                Gdx.app.log("GAME", "Target Region:" + region.name);
-                RCGTextureComponent tc2 = componentFactory.createTextureComponent(region);
+                RCGTextureComponent tc2 = componentFactory.createTextureComponent(Assets.getTargetKeyFrame(key2));
                 e2.add(tc2);
                 BoundsComponent bc2 = componentFactory.createBoundsComponent(x2, y, World.MOVE_SIZE, World.MOVE_SIZE);
                 e2.add(bc2);
@@ -553,21 +571,33 @@ public class GameScreen extends ScreenAdapter {
         if(songIndex == 0) {
             s = new Song("s1", 900f, 68);
             float targetMillis = 0f;
-            int index = 0;
             float beatsInSong = s.getLengthInSeconds() * 1000f / s.getMillisPerBeat();
+            float[] notes = {
+                    0f, 2.2f, 4.3f, 6.4f, 8.5f, 10.6f, 12.7f, 17f, 19.1f, 21.2f,
+                    23.3f, 24.4f, 24.8f, 25.2f, 27.6f, 29.7f, 31.8f, 32.1f, 32.4f,
+                    32.7f, 33.0f, 33.1f, 33.5f, 33.7f, 34.0f, 36.1f, 38.3f, 40.4f,
+                    42.3f, 42.5f, 44.6f, 46.6f, 46.8f, 51.0f, 53.1f, 55.2f, 57.3f,
+                    58.4f, 58.8f, 59.2f, 61.6f, 63.7f, 65.8f, 66.1f, 66.4f,
+                    66.6f, 67.1f, 67.5f, 67.9f
+            };
+//            for(int i=0;i<notes.length; i++){
+//                targetMillis = 1000f*notes[i];
+//                DanceMoveType dmt = moves[r.nextInt(4)];
+//                s.addMove(targetMillis, dmt);
+//            }
+
             for (int i = 0; i < beatsInSong; i++) {
                 targetMillis += s.getMillisPerBeat();
-                DanceMoveType dmt = moves[r.nextInt(4)];//index++ % 4];
+                DanceMoveType dmt = moves[r.nextInt(4)];
                 s.addMove(targetMillis, dmt);
             }
         }else{
             s = new Song("s2", 700f, 195);
             float targetMillis = 0f;
-            int index = 0;
             float beatsInSong = s.getLengthInSeconds() * 1000f / s.getMillisPerBeat();
             for (int i = 0; i < beatsInSong; i++) {
                 targetMillis += s.getMillisPerBeat();
-                DanceMoveType dmt = moves[r.nextInt(4)];//index++ % 4];
+                DanceMoveType dmt = moves[r.nextInt(4)];
                 s.addMove(targetMillis, dmt);
             }
         }
@@ -667,10 +697,9 @@ public class GameScreen extends ScreenAdapter {
             if(topMove != null){
                 DanceMoveComponent dmc = topMove.getComponent(DanceMoveComponent.class);
                 BoundsComponent bc = topMove.getComponent(BoundsComponent.class);
-                if(dmc != null && bc != null) {
+                if(dmc != null && bc != null && dmc.isPossible) {
                     if (dmc.key == key) {
                         if (World.isInPerfectRange(bc.bounds)) {
-                            player.getComponent(StateComponent.class).set(getActionStateFromKey(key));
                             pointsScored = 2;
                         } else if (World.isInOkRange(bc.bounds)) {
                             pointsScored = 1;
@@ -679,6 +708,8 @@ public class GameScreen extends ScreenAdapter {
                 }
 
                 if(pointsScored > 0){
+                    dmc.isPossible = false;
+                    player.getComponent(StateComponent.class).set(getActionStateFromKey(key));
                     StateComponent sc = topMove.getComponent(StateComponent.class);
                     PulseComponent pc = topMove.getComponent(PulseComponent.class);
                     sc.set(States.PRESSED);

@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.roaringcatgames.ld33.World;
 import com.roaringcatgames.ld33.components.*;
@@ -71,15 +72,20 @@ public class DanceSystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        DanceMoveComponent dmc = dmm.get(entity);
+
 
         BoundsComponent bc = bm.get(entity);
         if(World.isOutOfRange(bc.bounds.y)){
             this.getEngine().removeEntity(entity);
-        }else if(dmc.isPlayer1){
-            p1MovesQueue.add(entity);
         }else{
-            p2MovesQueue.add(entity);
+            DanceMoveComponent dmc = dmm.get(entity);
+            if(dmc.isPossible && bc.bounds.y > 0f) {
+                if (dmc.isPlayer1) {
+                    p1MovesQueue.add(entity);
+                } else {
+                    p2MovesQueue.add(entity);
+                }
+            }
         }
     }
 

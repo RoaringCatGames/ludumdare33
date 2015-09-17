@@ -89,6 +89,7 @@ public class ComponentFactory {
         move.isPlayer1 = isPlayer1;
         move.key = key;
         move.moveType = moveType;
+        move.isPossible = true;
         return move;
     }
 

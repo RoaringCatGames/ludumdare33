@@ -10,4 +10,5 @@ public class DanceMoveComponent implements Component {
     public DanceMoveType moveType = DanceMoveType.KICK;
     public boolean isPlayer1 = true;
     public int key;
+    public boolean isPossible = true;
 }

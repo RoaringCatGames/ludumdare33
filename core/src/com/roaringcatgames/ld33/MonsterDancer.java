@@ -2,6 +2,7 @@ package com.roaringcatgames.ld33;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,11 +15,19 @@ public class MonsterDancer extends Game {
 	AssetManager am;
 	@Override
 	public void create () {
+
+		Graphics.DisplayMode dm = Gdx.graphics.getDesktopDisplayMode();
+		Gdx.app.log("DISPLAY", "W: " + dm.width + " H: " + dm.height + " X: " + dm.bitsPerPixel);
+		Gdx.graphics.setDisplayMode(dm.width, dm.height, true);
+		Gdx.graphics.setVSync(true);
+		Gdx.input.setCursorCatched(false);
+
 		batch = new SpriteBatch();
 
 		Assets.loadSplash();
 		am = Assets.load();
 		setScreen(new SplashScreen(batch));
+
 	}
 
 	@Override

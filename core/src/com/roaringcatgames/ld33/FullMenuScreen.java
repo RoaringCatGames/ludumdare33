@@ -113,7 +113,7 @@ public class FullMenuScreen extends ScreenAdapter {
         float x = World.SCREEN.x + (World.SCREEN.width/2f);
         float y = World.SCREEN.y + (PlayerComponent.HEIGHT_M*(3f/4f));//World.SCREEN.y + 2f;
         TransformComponent stfc = componentFactory.createTransformComponent(x, y, 0.75f, 0.75f, 0f);
-        stfc.position.z = -1f;
+        stfc.position.z = 1f;
         spacebar.add(stfc);
 
         BoundsComponent sbc = componentFactory.createBoundsComponent(x, y, World.SCREEN.width/2f, 2f);

@@ -25,7 +25,6 @@ public class SplashScreen extends ScreenAdapter {
         super.render(delta);
 
         cam.update();
-        cam.update();
         batch.setProjectionMatrix(cam.combined);
         batch.enableBlending();
         batch.begin();

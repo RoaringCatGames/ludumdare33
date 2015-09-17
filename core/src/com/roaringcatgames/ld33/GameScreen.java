@@ -445,7 +445,7 @@ public class GameScreen extends ScreenAdapter {
                 nextSongBtn = engine.createEntity();
                 nextSongBtn.add(componentFactory.createBoundsComponent(nextX, nextY, nextW, 3f));
                 nextSongBtn.add(componentFactory.createTransformComponent(nextX, nextY, 1f, 1f, 0f));
-                nextSongBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Next Song"));
+                nextSongBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Next Song (Space)"));
                 engine.addEntity(nextSongBtn);
             }
 
@@ -455,11 +455,22 @@ public class GameScreen extends ScreenAdapter {
             backBtn = engine.createEntity();
             backBtn.add(componentFactory.createBoundsComponent(backX, backY, backW, 3f));
             backBtn.add(componentFactory.createTransformComponent(backX, backY, 1f, 1f, 0f));
-            backBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Menu"));
+            backBtn.add(componentFactory.createTextComponent(Assets.getFont(), "Menu (Backspace)"));
             engine.addEntity(backBtn);
 
         }
 
+        if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
+            currentSong.stop();
+            game.setScreen(new FullMenuScreen(game));
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && songIndex < 1 && nextSongBtn != null){
+            if(nextSongBtn != null)
+                engine.removeEntity(nextSongBtn);
+            if(backBtn != null)
+                engine.removeEntity(backBtn);
+            songIndex++;
+            state = GAME_READY;
+        }
         if (Gdx.input.justTouched()) {
             engine.getSystem(RenderingSystem.class).getCamera().unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
             BoundsComponent backBnds = backBtn.getComponent(BoundsComponent.class);

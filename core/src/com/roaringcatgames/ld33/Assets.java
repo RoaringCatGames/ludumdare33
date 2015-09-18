@@ -235,26 +235,26 @@ public class Assets {
             case Input.Keys.A:
                 region = atlas.findRegion(regionKey + "targetA");
                 break;
-            case Input.Keys.W:
-                region = atlas.findRegion(regionKey + "targetW");
-                break;
             case Input.Keys.S:
                 region = atlas.findRegion(regionKey + "targetS");
                 break;
             case Input.Keys.D:
                 region = atlas.findRegion(regionKey + "targetD");
                 break;
-            case Input.Keys.LEFT:
-                region = atlas.findRegion(regionKey + "targetLeft");
+            case Input.Keys.F:
+                region = atlas.findRegion(regionKey + "targetF");
                 break;
-            case Input.Keys.UP:
-                region = atlas.findRegion(regionKey + "targetUp");
+            case Input.Keys.J:
+                region = atlas.findRegion(regionKey + "TargetJ");
                 break;
-            case Input.Keys.DOWN:
-                region = atlas.findRegion(regionKey + "targetDown");
+            case Input.Keys.K:
+                region = atlas.findRegion(regionKey + "TargetK");
                 break;
-            case Input.Keys.RIGHT:
-                region = atlas.findRegion(regionKey + "targetRight");
+            case Input.Keys.L:
+                region = atlas.findRegion(regionKey + "TargetL");
+                break;
+            case Input.Keys.SEMICOLON:
+                region = atlas.findRegion(regionKey + "TargetSemi");
                 break;
         }
         return region;

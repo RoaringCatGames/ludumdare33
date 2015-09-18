@@ -51,8 +51,14 @@ public class GameScreen extends ScreenAdapter {
     Entity bgCity;
     Entity fgCity;
 
+    Entity p1Sweat;
+    Entity p2Sweat;
+
     Entity p1Score;
     Entity p2Score;
+
+    int p1Misses = 0;
+    int p2Misses = 0;
 
     int playerOneScore = 0;
     int playerTwoScore = 0;
@@ -214,6 +220,13 @@ public class GameScreen extends ScreenAdapter {
         bgcityTransform.position.z = -0.4f;
         bgCity.add(bgcityTransform);
         engine.addEntity(bgCity);
+
+//        Entity lights = engine.createEntity();
+//        lights.add(componentFactory.createTextureComponent(Assets.getBackLights()));
+//        TransformComponent lightTfm = componentFactory.createTransformComponent(World.WIDTH_METERS / 2f, World.HEIGHT_METERS / 2f, 1.1f, 1.1f, 0f);
+//        lightTfm.position.z = 0.1f;
+//        lights.add(lightTfm);
+//        engine.addEntity(lights);
     }
 
 
@@ -227,6 +240,8 @@ public class GameScreen extends ScreenAdapter {
 
         player1 = buildPlayerEntity("P1", p1x, p1y, p1sx, p1sy, p1r);
         engine.addEntity(player1);
+        p1Sweat = buildSweat(p1x - (PlayerComponent.WIDTH_M/4f), PlayerComponent.HEIGHT_M + 2f, false);
+        engine.addEntity(p1Sweat);
 
         if(game.is2Player) {
             float p2x = ((World.SCREEN.width / 4f) * 3f) + World.SCREEN.x,
@@ -237,20 +252,27 @@ public class GameScreen extends ScreenAdapter {
 
             player2 = buildPlayerEntity("P2", p2x, p2y, p2sx, p2sy, p2r);
             engine.addEntity(player2);
+            p2Sweat = buildSweat(p2x + (PlayerComponent.WIDTH_M/4f), PlayerComponent.HEIGHT_M + 2f, true);
+            engine.addEntity(p2Sweat);
         }
+    }
 
-        //MAYBE???
-//        Entity sweat = engine.createEntity();
-//        RCGTextureComponent tc = componentFactory.createTextureComponent();
-//        sweat.add(tc);
-//        TransformComponent tfc = componentFactory.createTransformComponent(p1x - (PlayerComponent.WIDTH_M/2f), PlayerComponent.HEIGHT_M, 1f, 1f, 0f);
-//        sweat.add(tfc);
-//        StateComponent sc = componentFactory.createStateComponent(States.ON, true);
-//        sweat.add(sc);
-//        AnimationComponent ac = componentFactory.createAnimationComponent();
-//        ac.animations.put(States.ON, new Animation(p1frameTime, Assets.getSweatFrames()));
-//        sweat.add(ac);
-//        engine.addEntity(sweat);
+    private Entity buildSweat(float posX, float posY, boolean isFlipped){
+        Entity sweat = engine.createEntity();
+        RCGTextureComponent tc = componentFactory.createTextureComponent();
+        sweat.add(tc);
+        float xScale = isFlipped ? -1f : 1f;
+        TransformComponent tfc = componentFactory.createTransformComponent(posX, posY, xScale, 1f, 0f);
+        tfc.isHidden = true;
+        tfc.position.z = -100f;
+        sweat.add(tfc);
+        StateComponent sc = componentFactory.createStateComponent(States.ON, true);
+        sweat.add(sc);
+        AnimationComponent ac = componentFactory.createAnimationComponent();
+        ac.animations.put(States.ON, new Animation(0.16f, Assets.getSweatFrames()));
+        sweat.add(ac);
+
+        return sweat;
     }
 
     private Entity buildPlayerEntity(String name, float x, float y, float scaleX, float scaleY, float rotation) {
@@ -364,17 +386,17 @@ public class GameScreen extends ScreenAdapter {
     private void updateRunning(float deltaTime){
 
         int scored = checkPlayerKey(Input.Keys.A, World.TOP_P1_MOVE, player1);
-        scored += checkPlayerKey(Input.Keys.W, World.TOP_P1_MOVE, player1);
         scored += checkPlayerKey(Input.Keys.S, World.TOP_P1_MOVE, player1);
         scored += checkPlayerKey(Input.Keys.D, World.TOP_P1_MOVE, player1);
+        scored += checkPlayerKey(Input.Keys.F, World.TOP_P1_MOVE, player1);
         playerOneScore += scored;
 
         if(game.is2Player) {
             scored = 0;
-            scored += checkPlayerKey(Input.Keys.LEFT, World.TOP_P2_MOVE, player2);
-            scored += checkPlayerKey(Input.Keys.UP, World.TOP_P2_MOVE, player2);
-            scored += checkPlayerKey(Input.Keys.DOWN, World.TOP_P2_MOVE, player2);
-            scored += checkPlayerKey(Input.Keys.RIGHT, World.TOP_P2_MOVE, player2);
+            scored += checkPlayerKey(Input.Keys.J, World.TOP_P2_MOVE, player2);
+            scored += checkPlayerKey(Input.Keys.K, World.TOP_P2_MOVE, player2);
+            scored += checkPlayerKey(Input.Keys.L, World.TOP_P2_MOVE, player2);
+            scored += checkPlayerKey(Input.Keys.SEMICOLON, World.TOP_P2_MOVE, player2);
             playerTwoScore += scored;
         }
 
@@ -405,6 +427,13 @@ public class GameScreen extends ScreenAdapter {
         p1Score.getComponent(TextComponent.class).text = "" + playerOneScore;
         p2Score.getComponent(TextComponent.class).text = "" + playerTwoScore;
 
+
+        p1Sweat.getComponent(TransformComponent.class).isHidden = p1Misses < 5;
+        if(p2Sweat != null){
+            p2Sweat.getComponent(TransformComponent.class).isHidden = p2Misses < 5;
+        }
+
+        Gdx.app.log("GAME", "P1Misses: " + p1Misses + " P2Misses: " + p2Misses);
 
 
         if(World.TOP_P1_MOVE == null && World.TOP_P2_MOVE == null && !currentSong.isPlaying()){
@@ -659,14 +688,14 @@ public class GameScreen extends ScreenAdapter {
         int key;
         if(isPlayer1) {
             key = m == DanceMoveType.KICK ? Input.Keys.A :
-                  m == DanceMoveType.FIRE ? Input.Keys.W :
-                  m == DanceMoveType.TAIL ? Input.Keys.S :
-                                            Input.Keys.D;
+                  m == DanceMoveType.FIRE ? Input.Keys.S :
+                  m == DanceMoveType.TAIL ? Input.Keys.D :
+                                            Input.Keys.F;
         }else{
-            key = m == DanceMoveType.KICK ? Input.Keys.LEFT :
-                  m == DanceMoveType.FIRE ? Input.Keys.UP :
-                  m == DanceMoveType.TAIL ? Input.Keys.DOWN :
-                                            Input.Keys.RIGHT;
+            key = m == DanceMoveType.KICK ? Input.Keys.J :
+                  m == DanceMoveType.FIRE ? Input.Keys.K :
+                  m == DanceMoveType.TAIL ? Input.Keys.L :
+                                            Input.Keys.SEMICOLON;
         }
         return key;
     }
@@ -686,13 +715,14 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private String getActionStateFromKey(int key){
-        return key == Input.Keys.A || key == Input.Keys.LEFT ?  States.KICK :
-                key == Input.Keys.W || key == Input.Keys.UP ?    States.FIRE :
-                        key == Input.Keys.S || key == Input.Keys.DOWN ?  States.TAIL :
+        return key == Input.Keys.A || key == Input.Keys.J ?  States.KICK :
+               key == Input.Keys.S || key == Input.Keys.K ?    States.FIRE :
+               key == Input.Keys.D || key == Input.Keys.L ?  States.TAIL :
                                 States.PUNCH;
     }
     private int checkPlayerKey(int key, Entity topMove, Entity player){
         int pointsScored = 0;
+        int missAdjust = 1;
         if(Gdx.input.isKeyJustPressed(key)){
             if(topMove != null){
                 DanceMoveComponent dmc = topMove.getComponent(DanceMoveComponent.class);
@@ -714,6 +744,19 @@ public class GameScreen extends ScreenAdapter {
                     PulseComponent pc = topMove.getComponent(PulseComponent.class);
                     sc.set(States.PRESSED);
                     pc.pulseSpeed = 2f;
+                    missAdjust = -1;
+                }
+            }
+
+            if(player == player1){
+                p1Misses += missAdjust;
+                if(p1Misses < 0){
+                    p1Misses = 0;
+                }
+            }else{
+                p2Misses += missAdjust;
+                if(p2Misses < 0){
+                    p2Misses = 0;
                 }
             }
         }

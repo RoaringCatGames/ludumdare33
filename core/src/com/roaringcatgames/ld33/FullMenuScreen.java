@@ -96,7 +96,7 @@ public class FullMenuScreen extends ScreenAdapter {
         knob.add(sc);
         BoundsComponent bc = componentFactory.createBoundsComponent(tfc.position.x, tfc.position.y, 3.31f, 3.31f);
         knob.add(bc);
-        RotateToComponent rc = componentFactory.createRotateToComponent(0f, 0f);
+        RotateToComponent rc = componentFactory.createRotateToComponent(-180f, -360f);
         knob.add(rc);
         engine.addEntity(knob);
 
@@ -199,19 +199,21 @@ public class FullMenuScreen extends ScreenAdapter {
     }
 
     public void createPlayerKeys(){
-        float wx = World.SCREEN.x + World.SCREEN.width/4f;
-        float y = World.SCREEN.y + PlayerComponent.HEIGHT_M + 3f;
-        createKey(wx, y, Input.Keys.W, true);
-        float sy = y-2f;
-        createKey(wx, sy, Input.Keys.S, true);
-        createKey(wx - 2f, sy, Input.Keys.A, true);
-        createKey(wx + 2f, sy, Input.Keys.D, true);
 
-        float ux = World.SCREEN.x + (World.SCREEN.width/4f)*3f;
-        createKey(ux, y, Input.Keys.UP, false);
-        createKey(ux, sy, Input.Keys.DOWN, false);
-        createKey(ux - 2f, sy, Input.Keys.LEFT, false);
-        createKey(ux + 2f, sy, Input.Keys.RIGHT, false);
+
+        float ax = (World.SCREEN.x + World.SCREEN.width/4f)-(3f);
+        float y = World.SCREEN.y + PlayerComponent.HEIGHT_M + 3f;
+        createKey(ax, y, Input.Keys.A, true);
+        //float sy = y-2f;
+        createKey(ax + 2f, y, Input.Keys.S, true);
+        createKey(ax + 4f, y, Input.Keys.D, true);
+        createKey(ax + 6f, y, Input.Keys.F, true);
+
+        float ux = (World.SCREEN.x + (World.SCREEN.width/4f)*3f)-3f;
+        createKey(ux, y, Input.Keys.J, false);
+        createKey(ux + 2f, y, Input.Keys.K, false);
+        createKey(ux + 4f, y, Input.Keys.L, false);
+        createKey(ux + 6f, y, Input.Keys.SEMICOLON, false);
 
     }
 
@@ -237,6 +239,8 @@ public class FullMenuScreen extends ScreenAdapter {
         e.add(tfc);
         e.add(kpc);
         engine.addEntity(e);
+        //Default to 2 players
+        game.is2Player = true;
     }
 
     public void createTVFrame(){
@@ -295,22 +299,22 @@ public class FullMenuScreen extends ScreenAdapter {
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.A)){
             player1.getComponent(StateComponent.class).set(States.KICK);
-        }else if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
-            player1.getComponent(StateComponent.class).set(States.FIRE);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.S)){
-            player1.getComponent(StateComponent.class).set(States.TAIL);
+            player1.getComponent(StateComponent.class).set(States.FIRE);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.D)){
+            player1.getComponent(StateComponent.class).set(States.TAIL);
+        }else if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
             player1.getComponent(StateComponent.class).set(States.PUNCH);
         }
 
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.J)) {
             player2.getComponent(StateComponent.class).set(States.KICK);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
             player2.getComponent(StateComponent.class).set(States.FIRE);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             player2.getComponent(StateComponent.class).set(States.TAIL);
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SEMICOLON)) {
             player2.getComponent(StateComponent.class).set(States.PUNCH);
         }
 

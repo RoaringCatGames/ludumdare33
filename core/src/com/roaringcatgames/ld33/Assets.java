@@ -147,6 +147,14 @@ public class Assets {
         return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(BANNER);
     }
 
+    public static TextureAtlas.AtlasRegion getBackLights(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(BACKLIGHTS);
+    }
+
+    public static TextureAtlas.AtlasRegion getFrontLights(){
+        return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(FRONTLIGHTS);
+    }
+
     public static TextureAtlas.AtlasRegion getBackgroundFrame(){
         return am.get(SPRITE_ATLAS, TEXTURE_ATLAS).findRegion(BG);
     }
@@ -193,6 +201,8 @@ public class Assets {
     private static String KNOB = "Knob";
     private static String SPACEBAR = "SPACE";
     private static String BANNER = "Banner";
+    private static String BACKLIGHTS = "LightingBack";
+    private static String FRONTLIGHTS = "LightingFront";
     private static String BG = "Background/Background";
     private static String BG_MENU = "Background/Background1";
     private static String WAVE_1 = "City/Wave1";
@@ -202,13 +212,19 @@ public class Assets {
 
 
     private static String A = "Keys/A";
-    private static String W = "Keys/W";
     private static String S = "Keys/S";
     private static String D = "Keys/D";
-    private static String LEFT = "Keys/Left";
-    private static String UP = "Keys/Up";
-    private static String DOWN = "Keys/Down";
-    private static String RIGHT = "Keys/Right";
+    private static String F = "Keys/F";
+
+    private static String J = "Keys/J";
+    private static String K = "Keys/K";
+    private static String L = "Keys/L";
+    private static String SEMI = "Keys/Semi";
+
+//    private static String LEFT = "Keys/Left";
+//    private static String UP = "Keys/Up";
+//    private static String DOWN = "Keys/Down";
+//    private static String RIGHT = "Keys/Right";
 
 
     public static TextureAtlas.AtlasRegion getTargetKeyFrame(int key){
@@ -260,26 +276,26 @@ public class Assets {
             case Input.Keys.A:
                 region = atlas.findRegions(regionKey + A).get(index);
                 break;
-            case Input.Keys.W:
-                region = atlas.findRegions(regionKey + W).get(index);
-                break;
             case Input.Keys.S:
                 region = atlas.findRegions(regionKey + S).get(index);
                 break;
             case Input.Keys.D:
                 region = atlas.findRegions(regionKey + D).get(index);
                 break;
-            case Input.Keys.LEFT:
-                region = atlas.findRegions(regionKey + LEFT).get(index);
+            case Input.Keys.F:
+                region = atlas.findRegions(regionKey + F).get(index);
                 break;
-            case Input.Keys.UP:
-                region = atlas.findRegions(regionKey + UP).get(index);
+            case Input.Keys.J:
+                region = atlas.findRegions(regionKey + J).get(index);
                 break;
-            case Input.Keys.DOWN:
-                region = atlas.findRegions(regionKey + DOWN).get(index);
+            case Input.Keys.K:
+                region = atlas.findRegions(regionKey + K).get(index);
                 break;
-            case Input.Keys.RIGHT:
-                region = atlas.findRegions(regionKey + RIGHT).get(index);
+            case Input.Keys.L:
+                region = atlas.findRegions(regionKey + L).get(index);
+                break;
+            case Input.Keys.SEMICOLON:
+                region = atlas.findRegions(regionKey + SEMI).get(index);
                 break;
         }
 
